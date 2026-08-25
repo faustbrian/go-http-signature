@@ -16,7 +16,7 @@ mkdir -p "$scratch/gocache" "$scratch/gomodcache"
     cd "$scratch"
     GOWORK=off go work init "$module_dir" "$module_dir/../.."
     GOWORK="$scratch/go.work" go work edit \
-        -replace="github.com/faustbrian/golib/pkg/http-signature@v0.0.0=$module_dir/../.."
+        -replace="github.com/faustbrian/go-http-signature@v0.0.0=$module_dir/../.."
 )
 cd "$module_dir"
 GOWORK="$scratch/go.work" GOCACHE="$scratch/gocache" \

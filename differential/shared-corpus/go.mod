@@ -1,10 +1,10 @@
-module github.com/faustbrian/golib/pkg/http-signature/differential/shared-corpus
+module github.com/faustbrian/go-http-signature/differential/shared-corpus
 
 go 1.26.6
 
 require (
 	github.com/dadrus/httpsig v0.9.1-0.20260717221208-0f24bf7dd9b7
-	github.com/faustbrian/golib/pkg/http-signature v0.0.0
+	github.com/faustbrian/go-http-signature v1.0.0
 	github.com/shogo82148/go-sfv v0.3.3
 	github.com/yaronf/httpsign v0.5.3-0.20260728182352-de382d35c1ad
 )

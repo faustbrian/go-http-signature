@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	httpsignature "github.com/faustbrian/golib/pkg/http-signature"
+	httpsignature "github.com/faustbrian/go-http-signature"
 )
 
 type exampleProvider struct {

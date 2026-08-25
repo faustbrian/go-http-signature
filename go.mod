@@ -1,4 +1,4 @@
-module github.com/faustbrian/golib/pkg/http-signature
+module github.com/faustbrian/go-http-signature
 
 go 1.26.6
 

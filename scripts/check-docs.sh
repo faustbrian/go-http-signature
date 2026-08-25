@@ -71,7 +71,7 @@ import (
     "net/http"
     "time"
 
-    httpsignature "github.com/faustbrian/golib/pkg/http-signature"
+    httpsignature "github.com/faustbrian/go-http-signature"
 )
 
 var provider docsProvider
@@ -94,8 +94,8 @@ module_root="$(pwd)"
 (
     cd "$documentation_build"
     go mod init docs.example/http-signature
-    go mod edit -require github.com/faustbrian/golib/pkg/http-signature@v0.0.0
-    go mod edit -replace github.com/faustbrian/golib/pkg/http-signature="$module_root"
+    go mod edit -require github.com/faustbrian/go-http-signature@v0.0.0
+    go mod edit -replace github.com/faustbrian/go-http-signature="$module_root"
     "$module_root/scripts/with-go-cache.sh" env GOWORK=off go test -mod=mod ./...
 )
 

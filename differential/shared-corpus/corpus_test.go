@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	httpsignature "github.com/faustbrian/golib/pkg/http-signature"
+	httpsignature "github.com/faustbrian/go-http-signature"
 )
 
 const differentialKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef" // gitleaks:allow -- Public fixture key.

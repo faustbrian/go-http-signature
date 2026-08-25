@@ -7,7 +7,7 @@ import (
 	"time"
 
 	dadrus "github.com/dadrus/httpsig"
-	httpsignature "github.com/faustbrian/golib/pkg/http-signature"
+	httpsignature "github.com/faustbrian/go-http-signature"
 	peer "github.com/yaronf/httpsign"
 )
 

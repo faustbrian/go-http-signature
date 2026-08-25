@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "repository": "github.com/faustbrian/go-http-signature",
+  "packages": [
+    {
+      "module_directory": ".",
+      "directory": ".",
+      "name": "httpsignature",
+      "import_path": "github.com/faustbrian/go-http-signature",
+      "kind": "public",
+      "production": true,
+      "executable": true,
+      "coverage_required": true,
+      "build_required": true,
+      "build_tags": []
+    },
+    {
+      "module_directory": ".",
+      "directory": "compatibility",
+      "name": "compatibility",
+      "import_path": "github.com/faustbrian/go-http-signature/compatibility",
+      "kind": "public",
+      "production": true,
+      "executable": true,
+      "coverage_required": true,
+      "build_required": true,
+      "build_tags": []
+    }
+  ]
+}

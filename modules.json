@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "repository": "github.com/faustbrian/go-http-signature",
+  "go_version": "1.26.6",
+  "modules": [
+    {
+      "directory": ".",
+      "module_path": "github.com/faustbrian/go-http-signature",
+      "go_version": "1.26.6",
+      "packages": [
+        {
+          "module_directory": ".",
+          "directory": ".",
+          "name": "httpsignature",
+          "import_path": "github.com/faustbrian/go-http-signature",
+          "kind": "public",
+          "production": true,
+          "executable": true,
+          "coverage_required": true,
+          "build_required": true,
+          "build_tags": []
+        },
+        {
+          "module_directory": ".",
+          "directory": "compatibility",
+          "name": "compatibility",
+          "import_path": "github.com/faustbrian/go-http-signature/compatibility",
+          "kind": "public",
+          "production": true,
+          "executable": true,
+          "coverage_required": true,
+          "build_required": true,
+          "build_tags": []
+        }
+      ],
+      "purpose": "`http-signature` implements HTTP Message Signatures (RFC 9421) and HTTP digest fields (RFC 9530) for Go `net/http` messages. The core separates Structured Fields syntax, signature-base construction, cryptographic algorithms, signing and verification policy, key resolution, replay consumption, and HTTP adapters.",
+      "lifecycle": "stable",
+      "kind": "public library",
+      "releasable": true,
+      "family": "protocols-and-descriptions",
+      "family_label": "Protocols And Descriptions",
+      "family_description": "Standards, envelopes, schemas, descriptions, signatures, and wire interoperability.",
+      "family_order": 3,
+      "version": "v1.0.0",
+      "tag_prefix": "v",
+      "owned_dependencies": [],
+      "reverse_owned_dependencies": [
+        "github.com/faustbrian/go-http-signature/benchmarks/comparison",
+        "github.com/faustbrian/go-http-signature/differential/shared-corpus",
+        "github.com/faustbrian/go-service/integration/reference-http"
+      ],
+      "external_runtime_dependencies": [
+        "github.com/dunglas/httpsfv",
+        "go.uber.org/goleak"
+      ],
+      "required_services": [],
+      "build_tags": [],
+      "test_tags": [],
+      "interoperability_tools": [
+        "dadrus/httpsig at 0f24bf7dd9b76727af985d9a6f7ce87207a18387",
+        "shogo82148/go-sfv v0.3.3",
+        "yaronf/httpsign at de382d35c1add89cc09b9355161d61471fb7f632"
+      ],
+      "specifications": [
+        "RFC 9421 HTTP Message Signatures",
+        "RFC 9530 Digest Fields",
+        "RFC 8941 Structured Field Values for HTTP",
+        "IANA HTTP Message Signature registries",
+        "IANA Hash Algorithms for HTTP Digest Fields registry",
+        "IANA HTTP Field Name registry",
+        "NIST CAVP FIPS 186-3 ECDSA test vectors"
+      ],
+      "conformance_corpora": [
+        "RFC 9421 Appendix B examples",
+        "RFC 9530 examples",
+        "NIST CAVP FIPS 186-3 ECDSA P-384 vectors",
+        "yaronf/httpsign RFC 9421 fixtures at de382d35c1add89cc09b9355161d61471fb7f632",
+        "dadrus/httpsig RFC 9421 fixtures at 0f24bf7dd9b76727af985d9a6f7ce87207a18387",
+        "Shared Structured Fields and signature-base differential corpus"
+      ],
+      "provenance": [
+        "spec/sources.lock.json"
+      ],
+      "goal_files": [
+        ".ai/GOAL.md",
+        ".ai/GOAL_HARDEN.md"
+      ],
+      "goal_status": "implementation-evidence-inventoried",
+      "goal_evidence": [
+        {
+          "file": ".ai/GOAL.md",
+          "requirements_sha256": "5a115e19bbc3b5bcd3d0e54bce1df96e5100f4f8f02f647c95ce29a6f9aef898",
+          "implementation_evidence": [
+            "CHANGELOG.md",
+            "README.md",
+            "docs/compatibility.md",
+            "docs/security.md"
+          ],
+          "verification_gates": [
+            "format-check",
+            "tidy-check",
+            "safety",
+            "vet",
+            "test",
+            "race",
+            "coverage",
+            "lint",
+            "staticcheck",
+            "vulnerability",
+            "secrets",
+            "licenses",
+            "sbom",
+            "fuzz",
+            "mutation",
+            "nilaway",
+            "docs",
+            "api",
+            "conformance",
+            "interoperability",
+            "benchmark"
+          ],
+          "implementation_status": "implemented-requires-fresh-verification"
+        },
+        {
+          "file": ".ai/GOAL_HARDEN.md",
+          "requirements_sha256": "ef062dc511da92d42f78b97a530ea24d2f06fa02a0e3b808e5891f715814be7d",
+          "implementation_evidence": [
+            "CHANGELOG.md",
+            "README.md",
+            "docs/compatibility.md",
+            "docs/security.md"
+          ],
+          "verification_gates": [
+            "format-check",
+            "tidy-check",
+            "safety",
+            "vet",
+            "test",
+            "race",
+            "coverage",
+            "lint",
+            "staticcheck",
+            "vulnerability",
+            "secrets",
+            "licenses",
+            "sbom",
+            "fuzz",
+            "mutation",
+            "nilaway",
+            "docs",
+            "api",
+            "conformance",
+            "interoperability",
+            "benchmark"
+          ],
+          "implementation_status": "implemented-requires-fresh-verification"
+        }
+      ],
+      "gates": {
+        "api_compatibility": true,
+        "benchmarks": true,
+        "conformance": true,
+        "coverage": true,
+        "documentation": true,
+        "fuzz": true,
+        "lint": true,
+        "mutation": true,
+        "race": true,
+        "security": true,
+        "tests": true
+      }
+    },
+    {
+      "directory": "benchmarks/comparison",
+      "module_path": "github.com/faustbrian/go-http-signature/benchmarks/comparison",
+      "go_version": "1.26.6",
+      "packages": [],
+      "purpose": "This non-releasable module isolates the comparison dependency from the public HTTP Message Signatures module. It compares an equivalent HMAC-SHA256 request operation with the maintained `github.com/yaronf/httpsign` implementation at commit `de382d35c1add89cc09b9355161d61471fb7f632` and `github.com/dadrus/httpsig` at commit `0f24bf7dd9b76727af985d9a6f7ce87207a18387`.",
+      "lifecycle": "internal",
+      "kind": "benchmark harness",
+      "releasable": false,
+      "version": "unreleased",
+      "tag_prefix": "benchmarks/comparison/v",
+      "owned_dependencies": [
+        "github.com/faustbrian/go-http-signature"
+      ],
+      "reverse_owned_dependencies": [],
+      "external_runtime_dependencies": [
+        "github.com/dadrus/httpsig",
+        "github.com/yaronf/httpsign"
+      ],
+      "required_services": [],
+      "build_tags": [],
+      "test_tags": [],
+      "interoperability_tools": [],
+      "specifications": [],
+      "conformance_corpora": [],
+      "provenance": [],
+      "goal_files": [],
+      "goal_status": "not-applicable",
+      "goal_evidence": [],
+      "gates": {
+        "api_compatibility": false,
+        "benchmarks": false,
+        "conformance": false,
+        "coverage": false,
+        "documentation": true,
+        "fuzz": false,
+        "lint": true,
+        "mutation": false,
+        "race": false,
+        "security": true,
+        "tests": true
+      }
+    },
+    {
+      "directory": "differential/shared-corpus",
+      "module_path": "github.com/faustbrian/go-http-signature/differential/shared-corpus",
+      "go_version": "1.26.6",
+      "packages": [],
+      "purpose": "This standalone module executes one checked-in corpus through this module and maintained independent Go implementations. It does not run peer self-tests.",
+      "lifecycle": "internal",
+      "kind": "interoperability harness",
+      "releasable": false,
+      "version": "unreleased",
+      "tag_prefix": "differential/shared-corpus/v",
+      "owned_dependencies": [
+        "github.com/faustbrian/go-http-signature"
+      ],
+      "reverse_owned_dependencies": [],
+      "external_runtime_dependencies": [
+        "github.com/dadrus/httpsig",
+        "github.com/shogo82148/go-sfv",
+        "github.com/yaronf/httpsign"
+      ],
+      "required_services": [],
+      "build_tags": [],
+      "test_tags": [],
+      "interoperability_tools": [],
+      "specifications": [],
+      "conformance_corpora": [],
+      "provenance": [],
+      "goal_files": [],
+      "goal_status": "not-applicable",
+      "goal_evidence": [],
+      "gates": {
+        "api_compatibility": false,
+        "benchmarks": false,
+        "conformance": false,
+        "coverage": false,
+        "documentation": true,
+        "fuzz": false,
+        "lint": true,
+        "mutation": false,
+        "race": false,
+        "security": true,
+        "tests": true
+      }
+    }
+  ]
+}

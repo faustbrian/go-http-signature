@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	httpsignature "github.com/faustbrian/golib/pkg/http-signature"
-	"github.com/faustbrian/golib/pkg/http-signature/compatibility"
+	httpsignature "github.com/faustbrian/go-http-signature"
+	"github.com/faustbrian/go-http-signature/compatibility"
 )
 
 type provider struct{ key httpsignature.SigningKey }

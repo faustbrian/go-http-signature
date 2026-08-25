@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/faustbrian/golib/pkg/http-signature/compatibility"
+	"github.com/faustbrian/go-http-signature/compatibility"
 )
 
 type roundTripperFunc func(*http.Request) (*http.Response, error)

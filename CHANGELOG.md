@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-25
+
 ### Fixed
 
 - Prove escaped quoted-string scanning before repairing a following integral
@@ -135,7 +137,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Publish the module from its standalone `github.com/faustbrian/go-http-signature` identity while preserving its documented API and behavior.
 - **Breaking:** `ResponseSigningMiddlewareConfig.ReportError` is now required.
   Callers must provide a concurrency-safe callback that records redacted late
   output failures; `MapError` remains responsible only for failures that can be
   mapped before response commitment.
+
+[Unreleased]: https://github.com/faustbrian/go-http-signature/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/faustbrian/go-http-signature/releases/tag/v1.0.0

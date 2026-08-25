@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	peerDadrus "github.com/dadrus/httpsig"
-	httpsignature "github.com/faustbrian/golib/pkg/http-signature"
+	httpsignature "github.com/faustbrian/go-http-signature"
 	peersfv "github.com/shogo82148/go-sfv"
 	peerYaronF "github.com/yaronf/httpsign"
 )
