@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Invoke comparison benchmarks directly from their owning module and resolve
+  its stable root-module requirement from the current standalone source.
+
 ### Changed
 
 - Exclude intentional nested modules from root local-proxy archives so local,

@@ -53,7 +53,7 @@ mutation:
 benchmark:
 	./scripts/with-go-cache.sh env GOWORK=off $(GO) test -mod=readonly ./... \
 		-run '^$$' -bench . -benchmem -benchtime=$(BENCH_TIME)
-	$(MAKE) comparison-benchmark BENCH_TIME=$(BENCH_TIME)
+	$(MAKE) -C benchmarks/comparison benchmark BENCH_TIME=$(BENCH_TIME) BENCH_COUNT=$(BENCH_COUNT)
 
 comparison-benchmark:
 	$(MAKE) -C benchmarks/comparison benchmark BENCH_TIME=$(BENCH_TIME) BENCH_COUNT=$(BENCH_COUNT)
