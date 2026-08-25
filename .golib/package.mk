@@ -20,7 +20,7 @@ test:
 	./scripts/with-go-cache.sh env GOWORK=off $(GO) test -mod=readonly ./... -count=1
 
 coverage:
-	./scripts/with-go-cache.sh ../../scripts/check-coverage.sh .
+	./scripts/with-go-cache.sh ./.golib/scripts/check-coverage.sh .
 
 race:
 	./scripts/with-go-cache.sh env GOWORK=off $(GO) test -mod=readonly -race ./... -count=1
@@ -48,7 +48,7 @@ fuzz:
 	FUZZ_TIME=$(FUZZ_TIME) ./scripts/check-fuzz.sh
 
 mutation:
-	./scripts/with-go-cache.sh ../../scripts/check-mutation.sh .
+	./scripts/with-go-cache.sh ./.golib/scripts/check-mutation.sh .
 
 benchmark:
 	./scripts/with-go-cache.sh env GOWORK=off $(GO) test -mod=readonly ./... \
@@ -62,7 +62,7 @@ docs:
 	./scripts/check-docs.sh
 
 api:
-	./scripts/with-go-cache.sh ../../scripts/check-api-baseline.sh .
+	./scripts/with-go-cache.sh ./.golib/scripts/check-api-baseline.sh .
 
 conformance:
 	./scripts/check-conformance.sh
