@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Replace copied repository verification tooling with the pinned
-  `go-library-tools` v1.0.4 contract while preserving the API baseline,
+  `go-library-tools` v1.0.6 contract while preserving the API baseline,
   mutation checkpoints, HTTP conformance tests, and package fixtures.
 
 ### Documentation
