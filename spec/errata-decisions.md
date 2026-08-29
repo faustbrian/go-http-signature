@@ -39,7 +39,7 @@ Any source digest, IANA `Last-Modified` value, erratum status, or registry entry
 change requires a reviewed lock refresh, conformance-matrix audit, and explicit
 compatibility and security decision before implementation behavior changes.
 The pinned HTTPWG corpus is the last revision explicitly targeting RFC 8941
-before RFC 9651-only type additions. Run `make spec-sources` to fetch each
-authoritative URL, compare its SHA-256 identity, verify the complete errata
+before RFC 9651-only type additions. The conformance portion of `make check`
+fetches each authoritative URL, compares its SHA-256 identity, verifies the complete errata
 inventory, and compare the machine-readable IANA records with their XML
 registries.

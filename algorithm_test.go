@@ -519,7 +519,7 @@ func TestAlgorithmKeyPredicatesRejectEveryIndependentBoundary(t *testing.T) {
 		{PublicKey: p256.PublicKey, D: big.NewInt(0)},
 		{PublicKey: p256.PublicKey, D: big.NewInt(-1)},
 		{PublicKey: p256.PublicKey, D: new(big.Int).Set(elliptic.P256().Params().N)},
-		{PublicKey: ecdsa.PublicKey{Curve: elliptic.P256(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(1)},
+		{PublicKey: ecdsa.PublicKey{Curve: elliptic.P256(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(1)}, //nolint:staticcheck // Deliberately invalid ECDSA key fixture.
 		func() *ecdsa.PrivateKey {
 			value := *p256
 			value.D = new(big.Int).Sub(value.D, big.NewInt(1)) //nolint:staticcheck // Deliberately corrupts an invalid-key fixture.
@@ -595,8 +595,8 @@ func TestAlgorithmsRejectCorrectTypesWithInvalidKeyMaterial(t *testing.T) {
 	t.Parallel()
 
 	base := []byte("base")
-	p256 := &ecdsa.PrivateKey{PublicKey: ecdsa.PublicKey{Curve: elliptic.P256(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(0)}
-	p384 := &ecdsa.PrivateKey{PublicKey: ecdsa.PublicKey{Curve: elliptic.P384(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(0)}
+	p256 := &ecdsa.PrivateKey{PublicKey: ecdsa.PublicKey{Curve: elliptic.P256(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(0)} //nolint:staticcheck // Deliberately invalid ECDSA key fixture.
+	p384 := &ecdsa.PrivateKey{PublicKey: ecdsa.PublicKey{Curve: elliptic.P384(), X: big.NewInt(1), Y: big.NewInt(1)}, D: big.NewInt(0)} //nolint:staticcheck // Deliberately invalid ECDSA key fixture.
 	badEdPrivate := make(ed25519.PrivateKey, ed25519.PrivateKeySize)
 	badEdPrivate[len(badEdPrivate)-1] = 1
 	for _, test := range []struct {

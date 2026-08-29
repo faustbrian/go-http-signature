@@ -183,7 +183,7 @@ fi
 
 (
     cd "${module_root}"
-    HTTPWG_RFC8941_CORPUS="${corpus_root}" ./scripts/with-go-cache.sh \
-        env GOWORK=off go test -mod=readonly . -run '^TestHTTPWGRFC8941Corpus$' -count=1
+    HTTPWG_RFC8941_CORPUS="${corpus_root}" GOWORK=off \
+        go test -mod=readonly . -run '^TestHTTPWGRFC8941Corpus$' -count=1
 )
 printf 'HTTPWG RFC 8941 corpus: 1526 parsing and 544 serialization cases passed\n'
