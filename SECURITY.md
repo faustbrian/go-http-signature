@@ -14,6 +14,9 @@ authorization, trusted proxy configuration, key generation and storage,
 rotation and revocation freshness, durable replay coordination, audit
 redaction, deployment time synchronization, and incident response.
 
+Run `make check` for module integrity, vulnerability scanning, and the source
+audit.
+
 A cryptographically valid signature is not proof that the signer is authorized
 for the requested operation. Digest fields alone do not prevent malicious
 tampering unless their values and relevant representation metadata are

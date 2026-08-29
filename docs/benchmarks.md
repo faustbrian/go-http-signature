@@ -1,6 +1,6 @@
 # Benchmarks
 
-Run `make benchmark` on an otherwise idle machine. The command reports the Go
+Run `make check` on an otherwise idle machine. The command reports the Go
 toolchain, operation latency, throughput where byte size is known, and
 allocations. Record CPU model, operating system, Go version, corpus, command,
 sample count, and `benchstat` comparison when publishing results.
@@ -11,7 +11,7 @@ with another implementation must use identical covered components, key type,
 body bytes, and validation policy; parser-only and full-policy operations are
 not equivalent.
 
-`make benchmark` also runs the isolated
+The benchmark portion of `make check` also runs the isolated
 [`benchmarks/comparison`](../benchmarks/comparison/README.md) module. It compares
 end-to-end request signing, field serialization and parsing, and verification
 against pinned `yaronf/httpsign` and `dadrus/httpsig` revisions using
