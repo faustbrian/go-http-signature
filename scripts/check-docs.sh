@@ -44,7 +44,7 @@ for document in Path('.').rglob('*.md'):
 print('documentation links resolve')
 PY
 
-./scripts/with-go-cache.sh env GOWORK=off go test -mod=readonly ./... -run '^Example' -count=1
+GOWORK=off go test -mod=readonly ./... -run '^Example' -count=1
 
 documentation_build="$(mktemp -d)"
 cleanup() {
@@ -96,9 +96,9 @@ module_root="$(pwd)"
     go mod init docs.example/http-signature
     go mod edit -require github.com/faustbrian/go-http-signature@v0.0.0
     go mod edit -replace github.com/faustbrian/go-http-signature="$module_root"
-    "$module_root/scripts/with-go-cache.sh" env GOWORK=off go test -mod=mod ./...
+    GOWORK=off go test -mod=mod ./...
 )
 
 api_reference="$documentation_build/api-reference.txt"
-./scripts/with-go-cache.sh env GOWORK=off go doc -all . > "$api_reference"
+GOWORK=off go doc -all . > "$api_reference"
 test -s "$api_reference"

@@ -112,7 +112,9 @@ paths.
 ## Documentation
 
 Use the [documentation index](docs/README.md) for integration, conformance,
-compatibility, security, benchmarks, and maintenance guidance.
+compatibility, security, benchmarks, and maintenance guidance. Observable
+protocol choices are indexed in the
+[specification decision register](docs/specification-decisions.md).
 
 ## License
 

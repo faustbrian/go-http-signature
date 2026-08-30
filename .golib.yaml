@@ -1,0 +1,108 @@
+schema_version: 1
+tool_version: v1.0.13
+tool_checksums_sha256: 164e5c8abefe655958f522677856816faddbd2a8d40eba7d37ba5a031210df70
+
+manifest:
+  modules: modules.json
+  packages: packages.json
+
+evidence:
+  root: .verification
+
+mutation:
+  root: .verification/mutation
+  imports:
+    - module: .
+      archive: .verification/mutation/bootstrap/root.zip
+      ledger: .verification/mutation/migration-ledger.json
+
+api:
+  baselines:
+    - module: .
+      mode: apidiff
+      path: api/baseline.txt
+
+operations:
+  - module: .
+    gate: docs
+    steps:
+      - type: make
+        makefile: verification/package.mk
+        target: docs
+        timeout: 20m
+  - module: .
+    gate: test
+    steps:
+      - type: make
+        makefile: verification/package.mk
+        target: package-contract
+        timeout: 20m
+  - module: .
+    gate: conformance
+    steps:
+      - type: make
+        makefile: verification/package.mk
+        target: conformance
+        timeout: 30m
+  - module: .
+    gate: interoperability
+    steps:
+      - type: make
+        makefile: verification/package.mk
+        target: interoperability
+        timeout: 30m
+  - module: .
+    gate: fuzz
+    steps:
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzParseSignatureInputs$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzParseSignatures$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzParseDigestFields$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzCreateSignatureBase$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzParseAcceptSignatures$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzParseDigestPreferences$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzStrictStructuredFieldsMultiline$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzExternalRequestTrailers$'
+        budget: 10000x
+        timeout: 20m
+      - type: go-test
+        packages: [.]
+        fuzz: '^FuzzRawHTTPMessageFields$'
+        budget: 10000x
+        timeout: 20m
+  - module: .
+    gate: benchmark
+    steps:
+      - type: make
+        makefile: verification/package.mk
+        target: benchmark
+        timeout: 30m

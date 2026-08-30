@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "retrieved_at": "2026-08-10T04:53:22+03:00",
+  "retrieved_at": "2026-08-30T05:48:47+03:00",
   "sources": [
     {
       "name": "RFC 8941 text",
@@ -30,13 +30,13 @@
       "name": "RFC 9421 errata records",
       "kind": "rfc-errata",
       "url": "https://errata.rfc-editor.org/search/?rfc_number=9421&presentation=records",
-      "sha256": "3f516aebd2d2255249c94718fb04cc69bd40e477a807b5acad209d4c5cb3783a"
+      "sha256": "2f4e8d247026fea7807f33fe47127b6255ab7d66b70e0cd99e6c687b4f8b887d"
     },
     {
       "name": "RFC 9530 errata records",
       "kind": "rfc-errata",
       "url": "https://errata.rfc-editor.org/search/?rfc_number=9530&presentation=records",
-      "sha256": "9d95d87653e8547edf221423c16c80a92ed297f00698e37638576a99a1050dfe"
+      "sha256": "98c05e2239c710a210cfa4d3d9e1ccc92ee23e5b19f04ad74a4f94584cd311bc"
     },
     {
       "name": "IANA HTTP Message Signature registries",
@@ -63,8 +63,8 @@
       "name": "IANA HTTP Field Name registry",
       "kind": "iana-registry",
       "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
-      "last_modified": "Fri, 07 Aug 2026 17:26:19 GMT",
-      "sha256": "bf556b570acea5cf8686521eafa90f91dbfabe61eb175e25956487dc38df3e9d"
+      "last_modified": "Fri, 28 Aug 2026 21:51:21 GMT",
+      "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d"
     },
     {
       "name": "HTTPWG RFC 8941 Structured Fields corpus",
