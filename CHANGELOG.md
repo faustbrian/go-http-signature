@@ -16,8 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Adopt the released shared repository tooling while retaining the package's
-  RFC conformance, interoperability, lifecycle, and clean-consumer contracts.
+- Adopt the checksum-verified `go-library-tools` v1.2.0 CLI and immutable
+  shared workflow so local and hosted gates enforce specification governance
+  while retaining RFC conformance, interoperability, lifecycle, and
+  clean-consumer contracts.
 - Refresh reviewed RFC Editor errata and IANA field-registry source identities
   after rendering and unrelated registration changes left this package's
   complete errata inventory, selected fields, and decisions unchanged.
