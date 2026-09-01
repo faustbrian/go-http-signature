@@ -1,5 +1,7 @@
 GOLIB ?= golib
 
+GOLIB ?= golib
+
 .PHONY: check ci inventory repository-check
 
 check:

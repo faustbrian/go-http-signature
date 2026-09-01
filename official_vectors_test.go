@@ -100,12 +100,9 @@ func TestNISTP384SHA384VerificationVector(t *testing.T) {
 
 	// NIST CAVP FIPS 186-3 SigVer.rsp, [P-384,SHA-384], Result = P.
 	message := decodeHex(t, "9dd789ea25c04745d57a381f22de01fb0abd3c72dbdefd44e43213c189583eef85ba662044da3de2dd8670e6325154480155bbeebb702c75781ac32e13941860cb576fe37a05b757da5b5b418f6dd7c30b042e40f4395a342ae4dce05634c33625e2bc524345481f7e253d9551266823771b251705b4a85166022a37ac28f1bd")
-	publicKey := parseECDSAPublicKey(
-		t,
-		elliptic.P384(),
+	publicKey := parseECDSAPublicKey(t, elliptic.P384(),
 		decodeHex(t, "cb908b1fd516a57b8ee1e14383579b33cb154fece20c5035e2b3765195d1951d75bd78fb23e00fef37d7d064fd9af144"),
-		decodeHex(t, "cd99c46b5857401ddcff2cf7cf822121faf1cbad9a011bed8c551f6f59b2c360f79bfbe32adbcaa09583bdfdf7c374bb"),
-	)
+		decodeHex(t, "cd99c46b5857401ddcff2cf7cf822121faf1cbad9a011bed8c551f6f59b2c360f79bfbe32adbcaa09583bdfdf7c374bb"))
 	signature := append(
 		decodeHex(t, "33f64fb65cd6a8918523f23aea0bbcf56bba1daca7aff817c8791dc92428d605ac629de2e847d43cee55ba9e4a0e83ba"),
 		decodeHex(t, "4428bb478a43ac73ecd6de51ddf7c28ff3c2441625a081714337dd44fea8011bae71959a10947b6ea33f77e128d3c6ae")...,
@@ -162,21 +159,16 @@ PSXSfBDiUGhwOw76WuSSsf1D4b/vLoJ10wIDAQAB
 
 func rfc9421P256PublicKey(t *testing.T) *ecdsa.PublicKey {
 	t.Helper()
-	return parseECDSAPublicKey(
-		t,
-		elliptic.P256(),
+	return parseECDSAPublicKey(t, elliptic.P256(),
 		decodeRawURL(t, "qIVYZVLCrPZHGHjP17CTW0_-D9Lfw0EkjqF7xB4FivA"),
-		decodeRawURL(t, "Mc4nN9LTDOBhfoUeg8Ye9WedFRhnZXZJA12Qp0zZ6F0"),
-	)
+		decodeRawURL(t, "Mc4nN9LTDOBhfoUeg8Ye9WedFRhnZXZJA12Qp0zZ6F0"))
 }
 
 func parseECDSAPublicKey(t *testing.T, curve elliptic.Curve, x, y []byte) *ecdsa.PublicKey {
 	t.Helper()
-	encoded := make([]byte, 1, 1+len(x)+len(y))
-	encoded[0] = 4
-	encoded = append(encoded, x...)
-	encoded = append(encoded, y...)
-	key, err := ecdsa.ParseUncompressedPublicKey(curve, encoded)
+	data := append([]byte{4}, x...)
+	data = append(data, y...)
+	key, err := ecdsa.ParseUncompressedPublicKey(curve, data)
 	if err != nil {
 		t.Fatalf("ParseUncompressedPublicKey() error = %v", err)
 	}
