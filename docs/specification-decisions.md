@@ -12,6 +12,57 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-001: RFC 8941 parsing model and dialect boundary
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc8941.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-001",
+  "title": "RFC 8941 parsing model and dialect boundary",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "interoperability policy",
+  "decision_scope": "defensive",
+  "specification": "RFC 8941 Structured Field Values for HTTP",
+  "version": "RFC 8941",
+  "source_authority": "rfc8941-source",
+  "section": "1.2 and 4.2",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Strict RFC 8941 parsing rejects later-dialect values at every public protocol boundary.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestHTTPWGRFC8941Corpus"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzStrictStructuredFieldsMultiline"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "ParseSignatureInputs"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 8941 Sections 1.2 and 4.2](https://www.rfc-editor.org/rfc/rfc8941.html#section-4.2).
 
 - **Status, owner, and classification:** `resolved`; `http-signature`
@@ -40,6 +91,55 @@ review. Superseded entries remain in this file and link to their replacement.
   RFC as a separately reviewed compatibility change.
 
 ## HTTP-SIG-DEC-002: Hostile-input and canonical-base resource ceilings
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc8941.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-002",
+  "title": "Hostile-input and canonical-base resource ceilings",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "optional behavior",
+  "decision_scope": "defensive",
+  "specification": "RFC 8941 Structured Field Values for HTTP",
+  "version": "RFC 8941",
+  "source_authority": "rfc8941-source",
+  "section": "3.1 through 3.3",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Validated parser limits and a one MiB default signature-base ceiling bound hostile input.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestRawSyntaxLimitsAcceptExactLimitsAndRejectTheirNeighbors"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseSignatureInputs"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "SyntaxLimits"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 8941 Section 4.2](https://www.rfc-editor.org/rfc/rfc8941.html#section-4.2).
 
@@ -70,6 +170,57 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-003: Complete-field combination, ordering, and duplicates
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc8941.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-003",
+  "title": "Complete-field combination, ordering, and duplicates",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "ambiguity",
+  "decision_scope": "normative",
+  "specification": "RFC 8941 Structured Field Values for HTTP",
+  "version": "RFC 8941",
+  "source_authority": "rfc8941-source",
+  "section": "4.2",
+  "requirement_strength": "MUST",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Field lines combine in received order, duplicate labels fail, and valid members retain wire order.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestParseSignaturesPreservesOrderAndCopiesBytes"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseSignatures"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "ParseSignatures"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 8941 Section 4.2](https://www.rfc-editor.org/rfc/rfc8941.html#section-4.2).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -95,6 +246,57 @@ review. Superseded entries remain in this file and link to their replacement.
   RFC assigns different combination semantics to a new field.
 
 ## HTTP-SIG-DEC-004: Covered-component identity and extension parameters
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-004",
+  "title": "Covered-component identity and extension parameters",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "ambiguity",
+  "decision_scope": "normative",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2",
+  "requirement_strength": "MUST",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Covered-component identity uses the name and order-insensitive parameter set while preserving serialization order.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerificationProfileMatchesRequiredComponentParametersIndependentOfOrder"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseSignatureInputs"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "ComponentIdentifier"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 2](https://www.rfc-editor.org/rfc/rfc9421.html#section-2).
 
@@ -126,6 +328,57 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-005: Request-target reconstruction and trusted proxy context
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-005",
+  "title": "Request-target reconstruction and trusted proxy context",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "transport-specific",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2.2",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Derived target components use one coherent context and never trust forwarding fields automatically.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestCreateSignatureBaseUsesExplicitExternalRequestTargetThroughout"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzCreateSignatureBase"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "ExternalRequestContext"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 Section 2.2](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.2).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -155,6 +408,57 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-006: Query parameter decoding and duplicate values
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-006",
+  "title": "Query parameter decoding and duplicate values",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "implementation-defined behavior",
+  "decision_scope": "normative",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2.2.8",
+  "requirement_strength": "MUST",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "The @query-param component uses Go form parsing and preserves decoded duplicate values in received order.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestQueryParameterUsesHTMLFormParsing"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzCreateSignatureBase"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "CreateSignatureBase"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 Section 2.2.8](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.2.8).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -181,6 +485,57 @@ review. Superseded entries remain in this file and link to their replacement.
   errata or Go's documented query semantics change.
 
 ## HTTP-SIG-DEC-007: Structured, binary, trailer, and related-request modes
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-007",
+  "title": "Structured, binary, trailer, and related-request modes",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "ambiguity",
+  "decision_scope": "normative",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2.1",
+  "requirement_strength": "MUST",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Registered component parameters are validated by kind and incompatible combinations fail before cryptography.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestComponentParameterAndResolutionBoundaries"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzExternalRequestTrailers"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "CreateSignatureBase"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 2.1](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.1).
 
@@ -209,6 +564,55 @@ review. Superseded entries remain in this file and link to their replacement.
   registers a new component parameter and its semantics are implemented.
 
 ## HTTP-SIG-DEC-008: Application profiles and signature metadata policy
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-008",
+  "title": "Application profiles and signature metadata policy",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "normative",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "1.1",
+  "requirement_strength": "REQUIRED",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Signing and verification require explicit coherent profiles that inbound metadata cannot widen.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestSigningProfileRequiresExplicitCoherentPolicy"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseSignatureInputs"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "SigningProfile"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 1.1](https://www.rfc-editor.org/rfc/rfc9421.html#section-1.1).
 
@@ -239,6 +643,57 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-009: Multiple signatures, label matching, and selection
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-009",
+  "title": "Multiple signatures, label matching, and selection",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "ambiguity",
+  "decision_scope": "application-policy",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "4 and 5.2",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Verification selects an explicit actual label while request fulfillment preserves separate label correlation.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerifierRejectsDifferentLabelSetsBeforeSelection"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseAcceptSignatures"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+    "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "Verifier.Verify"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 Section 4](https://www.rfc-editor.org/rfc/rfc9421.html#section-4).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -266,6 +721,55 @@ review. Superseded entries remain in this file and link to their replacement.
   only for a separately specified negotiation profile.
 
 ## HTTP-SIG-DEC-010: Algorithm registry, strict key binding, and randomness
+
+Authoritative source URL: https://www.iana.org/assignments/http-message-signature/http-message-signature.xml
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-010",
+  "title": "Algorithm registry, strict key binding, and randomness",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "interoperability policy",
+  "decision_scope": "normative",
+  "specification": "IANA HTTP Message Signature registries",
+  "version": "2026-07-20",
+  "source_authority": "iana-http-message-signature",
+  "section": "Signature Algorithms",
+  "requirement_strength": "MUST",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
+  "selected_behavior": "Only active registered algorithms with strict key, size, encoding, and randomness rules are accepted.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestRFC9421AppendixBAlgorithmVectors"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [
+        "spec/interoperability.md"
+  ],
+  "public_apis": [
+    "Algorithm"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 3.3](https://www.rfc-editor.org/rfc/rfc9421.html#section-3.3).
 
@@ -299,6 +803,53 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-011: Key resolution, rotation, revocation, and safe failures
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-011",
+  "title": "Key resolution, rotation, revocation, and safe failures",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "defensive",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "5",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Key resolution is caller-owned, bounded, rotation-aware, revocation-aware, and failure-safe.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerifierLifecycleKeyRotationAndRevocation"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "KeyResolver"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 Section 5](https://www.rfc-editor.org/rfc/rfc9421.html#section-5).
 
 - **Status, owner, and classification:** `resolved`; maintainers; defensive
@@ -327,6 +878,53 @@ review. Superseded entries remain in this file and link to their replacement.
   is adopted.
 
 ## HTTP-SIG-DEC-012: Replay identity and atomic nonce consumption
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-012",
+  "title": "Replay identity and atomic nonce consumption",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "defensive",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "7.2.6",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "A bounded replay identity is consumed atomically only after every other verification check succeeds.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestMemoryReplayStoreAllowsExactlyOneConcurrentConsumer"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "ReplayStore"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 7.2.6](https://www.rfc-editor.org/rfc/rfc9421.html#section-7.2.6).
 
@@ -358,6 +956,55 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-013: Digest algorithms, deprecated names, and representation
 
+Authoritative source URL: https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-013",
+  "title": "Digest algorithms, deprecated names, and representation",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "erratum",
+  "decision_scope": "normative",
+  "specification": "IANA Hash Algorithms for HTTP Digest Fields registry",
+  "version": "2024-05-22",
+  "source_authority": "iana-http-digest-algorithms",
+  "section": "Hash Algorithms for HTTP Digest Fields",
+  "requirement_strength": "MUST NOT",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Active RFC 9530 fields and algorithms remain separate from obsolete names and unknown algorithms.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestDigestParserAndVerifierBoundarySemantics"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzParseDigestFields"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "ParseDigestFields"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9530 Sections 2 and 3](https://www.rfc-editor.org/rfc/rfc9530.html#section-2).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -388,6 +1035,53 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-014: Buffered body ownership and digest release
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9530.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-014",
+  "title": "Buffered body ownership and digest release",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "defensive",
+  "specification": "RFC 9530 Digest Fields",
+  "version": "RFC 9530",
+  "source_authority": "rfc9530-source",
+  "section": "2 and 3",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Buffered adapters verify bounded coded-content bytes before releasing one replayable owned body.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerifyingRoundTripperVerifiesContentDigestAndReturnsReplayableCodedBody"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "NewVerifyingRoundTripper"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9530 Section 3](https://www.rfc-editor.org/rfc/rfc9530.html#section-3).
 
 - **Status, owner, and classification:** `resolved`; maintainers; transport and
@@ -417,6 +1111,55 @@ review. Superseded entries remain in this file and link to their replacement.
   authenticated-release invariant.
 
 ## HTTP-SIG-DEC-015: Trailer finality, streaming, and retry ownership
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9530.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-015",
+  "title": "Trailer finality, streaming, and retry ownership",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "transport-specific",
+  "specification": "RFC 9530 Digest Fields",
+  "version": "RFC 9530",
+  "source_authority": "rfc9530-source",
+  "section": "2 and 3",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Streaming adapters finalize protected trailers at EOF and reject late collision or protocol ambiguity.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestTrailerSigningRoundTripperStreamsDigestAndSignatureAtEOF"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzExternalRequestTrailers"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "NewTrailerSigningRoundTripper"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 2.1.3](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.1.3).
 
@@ -449,6 +1192,53 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-016: Response signatures and immutable related requests
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-016",
+  "title": "Response signatures and immutable related requests",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "transport-specific",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2.4",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Related-request components bind only an immutable normalized actual-sent request snapshot.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerifyingRoundTripperBindsReqComponentsToImmutableActualSentRequest"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "MessageContext.RelatedRequest"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 Section 2.4](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.4).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
@@ -476,6 +1266,53 @@ review. Superseded entries remain in this file and link to their replacement.
   Reconsider if `net/http` exposes a stable standard actual-sent snapshot.
 
 ## HTTP-SIG-DEC-017: Cryptographic validity is not authorization
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-017",
+  "title": "Cryptographic validity is not authorization",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "omission",
+  "decision_scope": "application-policy",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "5",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Verification returns authenticated facts and leaves authorization to separate caller-owned policy.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestVerifierReturnsSafeTypedFailuresForPolicyTimeAndKeyErrors"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "VerificationResult"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Section 5](https://www.rfc-editor.org/rfc/rfc9421.html#section-5).
 
@@ -505,6 +1342,55 @@ review. Superseded entries remain in this file and link to their replacement.
   integration package.
 
 ## HTTP-SIG-DEC-018: Legacy and vendor protocol isolation
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-018",
+  "title": "Legacy and vendor protocol isolation",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "interoperability policy",
+  "decision_scope": "defensive",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "Appendix D",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "RFC 9421 entry points never auto-detect or reinterpret legacy and vendor signing protocols.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestHTTPAdaptersRejectCaseCollidingProtectedFields"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzRawHTTPMessageFields"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "Verifier"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative reference:** [RFC 9421 Appendix D](https://www.rfc-editor.org/rfc/rfc9421.html#appendix-D).
 
@@ -542,6 +1428,53 @@ review. Superseded entries remain in this file and link to their replacement.
 
 ## HTTP-SIG-DEC-019: Errata and registry changes do not silently change behavior
 
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-019",
+  "title": "Errata and registry changes do not silently change behavior",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "erratum",
+  "decision_scope": "defensive",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "Errata and IANA registries",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Specifications, errata, registries, corpora, and peer revisions are exact reviewed pins.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestNISTP384SHA384VerificationVector"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "All RFC 9421 and RFC 9530 public entry points"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
+
 **Authoritative reference:** [RFC 9421 errata](https://www.rfc-editor.org/errata/rfc9421).
 
 - **Status, owner, and classification:** `resolved`; maintainers; errata,
@@ -571,6 +1504,55 @@ review. Superseded entries remain in this file and link to their replacement.
   every time a pinned digest, erratum status, or registry entry changes.
 
 ## HTTP-SIG-DEC-020: Net/http wire identity is explicit and fail closed
+
+Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
+
+### Canonical decision record
+
+```json
+{
+  "id": "HTTP-SIG-DEC-020",
+  "title": "Net/http wire identity is explicit and fail closed",
+  "status": "resolved",
+  "owner": "http-signature maintainers",
+  "classification": "implementation-defined behavior",
+  "decision_scope": "transport-specific",
+  "specification": "RFC 9421 HTTP Message Signatures",
+  "version": "RFC 9421",
+  "source_authority": "rfc9421-source",
+  "section": "2.1 and 2.2",
+  "requirement_strength": "not specified",
+  "issue": "The cited authority leaves an observable package boundary that must not remain an undocumented default.",
+  "interpretations": [
+    "Delegate the boundary to implicit dependency or transport behavior.",
+    "Apply the explicit package behavior recorded by this decision."
+  ],
+  "peer_behavior": "Maintained-peer differential evidence is not practical for this package-owned policy boundary.",
+  "selected_behavior": "Message context distinguishes inbound, actual-sent, and response transport identity and rejects ambiguity.",
+  "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
+  "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
+  "resource_consequences": "Processing and retained state remain within documented finite bounds.",
+  "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
+  "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
+  "executable_evidence": [
+    "TestSignatureBaseUsesNetHTTPTransportManagedRequestFields"
+  ],
+  "fixture_evidence": [],
+  "fuzz_evidence": [
+    "FuzzRawHTTPMessageFields"
+  ],
+  "interoperability_evidence": [],
+  "differential_evidence": [],
+  "public_apis": [
+    "MessageContext"
+  ],
+  "documentation": [
+    "docs/specification-decisions.md"
+  ],
+  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
+}
+```
 
 **Authoritative references:** [RFC 9421 Section 2.1](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.1), [RFC 9110 Section 15.3.6](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.6), and [Go net/http](https://pkg.go.dev/net/http).
 

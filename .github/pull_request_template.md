@@ -16,6 +16,8 @@ transport, or protocol changes, list:
 - changed normative sources, registries, fixtures, or errata;
 - selected observable behavior and alternatives considered;
 - compatibility and wire consequences;
+- the changelog entry for every observable decision change;
 - executable conformance and interoperability evidence.
+- any superseded decision and its replacement.
 
 State `Not applicable` only when no specification-backed behavior can change.

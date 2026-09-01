@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-08-30",
+  "review_interval_days": 30,
+  "authorities": [
+    {
+      "id": "rfc8941-source",
+      "kind": "specification",
+      "version": "RFC 8941",
+      "url": "https://www.rfc-editor.org/rfc/rfc8941.txt",
+      "sha256": "92e07becbe27974319d79de6195e72e25062b4193f68623e90ea4f7deaf33bb9",
+      "specifications": [
+        "RFC 8941 Structured Field Values for HTTP"
+      ]
+    },
+    {
+      "id": "rfc8941-errata",
+      "kind": "errata",
+      "url": "https://errata.rfc-editor.org/search/?rfc_number=8941&presentation=records",
+      "sha256": "3905d3f16a4e6f122779fe377a482b690e3ea8a306c1dd7f78d080a737fc12f5",
+      "specifications": [
+        "RFC 8941 Structured Field Values for HTTP"
+      ]
+    },
+    {
+      "id": "rfc9421-source",
+      "kind": "specification",
+      "version": "RFC 9421",
+      "url": "https://www.rfc-editor.org/rfc/rfc9421.txt",
+      "sha256": "612655786bf4293bfc486e4177571467fbb3de6e6f0eea90cb74c346a34fdf3c",
+      "specifications": [
+        "RFC 9421 HTTP Message Signatures"
+      ]
+    },
+    {
+      "id": "rfc9421-errata",
+      "kind": "errata",
+      "url": "https://errata.rfc-editor.org/search/?rfc_number=9421&presentation=records",
+      "sha256": "2f4e8d247026fea7807f33fe47127b6255ab7d66b70e0cd99e6c687b4f8b887d",
+      "specifications": [
+        "RFC 9421 HTTP Message Signatures"
+      ]
+    },
+    {
+      "id": "rfc9530-source",
+      "kind": "specification",
+      "version": "RFC 9530",
+      "url": "https://www.rfc-editor.org/rfc/rfc9530.txt",
+      "sha256": "544dbb7d9afceafa8c9931d9924ca6cff2b4807274166d7ed2483342ef2cdd6a",
+      "specifications": [
+        "RFC 9530 Digest Fields"
+      ]
+    },
+    {
+      "id": "rfc9530-errata",
+      "kind": "errata",
+      "url": "https://errata.rfc-editor.org/search/?rfc_number=9530&presentation=records",
+      "sha256": "98c05e2239c710a210cfa4d3d9e1ccc92ee23e5b19f04ad74a4f94584cd311bc",
+      "specifications": [
+        "RFC 9530 Digest Fields"
+      ]
+    },
+    {
+      "id": "iana-http-message-signature",
+      "kind": "registry",
+      "version": "2026-07-20",
+      "url": "https://www.iana.org/assignments/http-message-signature/http-message-signature.xml",
+      "sha256": "bd4b0304e21e226fef189ed283a31392b5ffc99a37d00e9911dc011dcfb1523f",
+      "specifications": [
+        "IANA HTTP Message Signature registries"
+      ]
+    },
+    {
+      "id": "iana-http-message-signature-updates",
+      "kind": "releases",
+      "url": "https://www.iana.org/assignments/http-message-signature/http-message-signature.xml",
+      "sha256": "bd4b0304e21e226fef189ed283a31392b5ffc99a37d00e9911dc011dcfb1523f",
+      "specifications": [
+        "IANA HTTP Message Signature registries"
+      ]
+    },
+    {
+      "id": "iana-http-digest-algorithms",
+      "kind": "registry",
+      "version": "2024-05-22",
+      "url": "https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml",
+      "sha256": "6336a1abc58420f6fcabab4a0cd999ce3c0a8f12e034e543f05edf342cf927e7",
+      "specifications": [
+        "IANA Hash Algorithms for HTTP Digest Fields registry"
+      ]
+    },
+    {
+      "id": "iana-http-digest-algorithms-updates",
+      "kind": "releases",
+      "url": "https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml",
+      "sha256": "6336a1abc58420f6fcabab4a0cd999ce3c0a8f12e034e543f05edf342cf927e7",
+      "specifications": [
+        "IANA Hash Algorithms for HTTP Digest Fields registry"
+      ]
+    },
+    {
+      "id": "iana-http-fields",
+      "kind": "registry",
+      "version": "2026-08-28",
+      "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
+      "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d",
+      "specifications": [
+        "IANA HTTP Field Name registry"
+      ]
+    },
+    {
+      "id": "iana-http-fields-updates",
+      "kind": "releases",
+      "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
+      "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d",
+      "specifications": [
+        "IANA HTTP Field Name registry"
+      ]
+    },
+    {
+      "id": "nist-cavp-186-3",
+      "kind": "specification",
+      "version": "FIPS 186-3 CAVP",
+      "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss/186-3ecdsatestvectors.zip",
+      "sha256": "e0d9bee3f760ca3fabb82bd43dd04c13ee64ca9e0b719c6ea64fd52c9f0dd929",
+      "specifications": [
+        "NIST CAVP FIPS 186-3 ECDSA test vectors"
+      ]
+    },
+    {
+      "id": "nist-cavp-186-3-updates",
+      "kind": "releases",
+      "url": "https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss/186-3ecdsatestvectors.zip",
+      "sha256": "e0d9bee3f760ca3fabb82bd43dd04c13ee64ca9e0b719c6ea64fd52c9f0dd929",
+      "specifications": [
+        "NIST CAVP FIPS 186-3 ECDSA test vectors"
+      ]
+    }
+  ]
+}

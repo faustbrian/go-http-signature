@@ -1,4 +1,4 @@
-SHELL := /usr/bin/env bash
+GOLIB ?= golib
 
 GOLIB ?= golib
 
@@ -7,7 +7,9 @@ GOLIB ?= golib
 check:
 	$(GOLIB) check --all
 
-ci: repository-check check
+ci:
+	$(GOLIB) repository check
+	$(GOLIB) check --all
 
 inventory repository-check:
 	$(GOLIB) repository check

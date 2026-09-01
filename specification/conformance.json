@@ -1,0 +1,407 @@
+{
+  "schema_version": 1,
+  "decisions": [
+    {
+      "id": "HTTP-SIG-DEC-001",
+      "authoritative_sources": [
+        "rfc8941-source"
+      ],
+      "executable_evidence": [
+        "TestHTTPWGRFC8941Corpus"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzStrictStructuredFieldsMultiline"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "deliberate policy difference",
+      "public_behavior": [
+        "Strict RFC 8941 parsing rejects later-dialect values at every public protocol boundary."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-002",
+      "authoritative_sources": [
+        "rfc8941-source"
+      ],
+      "executable_evidence": [
+        "TestRawSyntaxLimitsAcceptExactLimitsAndRejectTheirNeighbors"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseSignatureInputs"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Validated parser limits and a one MiB default signature-base ceiling bound hostile input."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-003",
+      "authoritative_sources": [
+        "rfc8941-source"
+      ],
+      "executable_evidence": [
+        "TestParseSignaturesPreservesOrderAndCopiesBytes"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseSignatures"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "Field lines combine in received order, duplicate labels fail, and valid members retain wire order."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-004",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestVerificationProfileMatchesRequiredComponentParametersIndependentOfOrder"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseSignatureInputs"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "Covered-component identity uses the name and order-insensitive parameter set while preserving serialization order."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-005",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestCreateSignatureBaseUsesExplicitExternalRequestTargetThroughout"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzCreateSignatureBase"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "Derived target components use one coherent context and never trust forwarding fields automatically."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-006",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestQueryParameterUsesHTMLFormParsing"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzCreateSignatureBase"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "The @query-param component uses Go form parsing and preserves decoded duplicate values in received order."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-007",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestComponentParameterAndResolutionBoundaries"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzExternalRequestTrailers"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "Registered component parameters are validated by kind and incompatible combinations fail before cryptography."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-008",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestSigningProfileRequiresExplicitCoherentPolicy"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseSignatureInputs"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Signing and verification require explicit coherent profiles that inbound metadata cannot widen."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-009",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestVerifierRejectsDifferentLabelSetsBeforeSelection"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseAcceptSignatures"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "deliberate policy difference",
+      "public_behavior": [
+        "Verification selects an explicit actual label while request fulfillment preserves separate label correlation."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-010",
+      "authoritative_sources": [
+        "iana-http-message-signature"
+      ],
+      "executable_evidence": [
+        "TestRFC9421AppendixBAlgorithmVectors"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [
+        "spec/interoperability.md"
+      ],
+      "differential_classification": "maintained peer agreement",
+      "public_behavior": [
+        "Only active registered algorithms with strict key, size, encoding, and randomness rules are accepted."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-011",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestVerifierLifecycleKeyRotationAndRevocation"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Key resolution is caller-owned, bounded, rotation-aware, revocation-aware, and failure-safe."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-012",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestMemoryReplayStoreAllowsExactlyOneConcurrentConsumer"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "A bounded replay identity is consumed atomically only after every other verification check succeeds."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-013",
+      "authoritative_sources": [
+        "iana-http-digest-algorithms"
+      ],
+      "executable_evidence": [
+        "TestDigestParserAndVerifierBoundarySemantics"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzParseDigestFields"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Active RFC 9530 fields and algorithms remain separate from obsolete names and unknown algorithms."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-014",
+      "authoritative_sources": [
+        "rfc9530-source"
+      ],
+      "executable_evidence": [
+        "TestVerifyingRoundTripperVerifiesContentDigestAndReturnsReplayableCodedBody"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Buffered adapters verify bounded coded-content bytes before releasing one replayable owned body."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-015",
+      "authoritative_sources": [
+        "rfc9530-source"
+      ],
+      "executable_evidence": [
+        "TestTrailerSigningRoundTripperStreamsDigestAndSignatureAtEOF"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzExternalRequestTrailers"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Streaming adapters finalize protected trailers at EOF and reject late collision or protocol ambiguity."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-016",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestVerifyingRoundTripperBindsReqComponentsToImmutableActualSentRequest"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Related-request components bind only an immutable normalized actual-sent request snapshot."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-017",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestVerifierReturnsSafeTypedFailuresForPolicyTimeAndKeyErrors"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Verification returns authenticated facts and leaves authorization to separate caller-owned policy."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-018",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestHTTPAdaptersRejectCaseCollidingProtectedFields"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzRawHTTPMessageFields"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "RFC 9421 entry points never auto-detect or reinterpret legacy and vendor signing protocols."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-019",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestNISTP384SHA384VerificationVector"
+      ],
+      "fixtures": [],
+      "fuzz": [],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Specifications, errata, registries, corpora, and peer revisions are exact reviewed pins."
+      ]
+    },
+    {
+      "id": "HTTP-SIG-DEC-020",
+      "authoritative_sources": [
+        "rfc9421-source"
+      ],
+      "executable_evidence": [
+        "TestSignatureBaseUsesNetHTTPTransportManagedRequestFields"
+      ],
+      "fixtures": [],
+      "fuzz": [
+        "FuzzRawHTTPMessageFields"
+      ],
+      "interoperability_evidence": [],
+      "interoperability_classification": "not assessed",
+      "differential_evidence": [],
+      "differential_classification": "not assessed",
+      "public_behavior": [
+        "Message context distinguishes inbound, actual-sent, and response transport identity and rejects ambiguity."
+      ]
+    }
+  ]
+}
