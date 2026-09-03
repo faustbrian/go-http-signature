@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adopt the checksum-verified `go-library-tools` v1.3.0 CLI, schema-v2 cohesion
   metadata, repository-local cohesion gate, and immutable hosted enforcement.
+- Adopt the checksum-verified `go-library-tools` v1.4.0 CLI and public-first
+  dependency resolution so the nested comparison and differential modules use
+  the published root v1.0.0 identity while retaining bootstrap fallback.
 - Adopt the checksum-verified `go-library-tools` v1.2.0 CLI and immutable
   shared workflow so local and hosted gates enforce specification governance
   while retaining RFC conformance, interoperability, lifecycle, and

@@ -117,7 +117,7 @@ protocol choices are indexed in the
 [specification decision register](docs/specification-decisions.md).
 Shared construction, ownership, lifecycle, and package-selection conventions
 are documented in the versioned
-[Golib ecosystem index](https://github.com/faustbrian/go-library-tools/blob/v1.3.0/docs/ecosystem/README.md).
+[Golib ecosystem index](https://github.com/faustbrian/go-library-tools/blob/v1.4.0/docs/ecosystem/README.md).
 
 ## License
 
