@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "repository": "github.com/faustbrian/go-http-signature",
   "go_version": "1.26.6",
   "modules": [
@@ -84,6 +84,90 @@
       "goal_files": [],
       "goal_status": "not-applicable",
       "goal_evidence": [],
+      "cohesion": {
+        "family": "protocols-and-descriptions",
+        "secondary_capabilities": [
+          "cryptography-and-secrets",
+          "http-and-service-edge",
+          "protocols-and-schemas",
+          "testing-and-conformance",
+          "transport-and-networking"
+        ],
+        "responsibility": "Provide bounded HTTP Message Signatures, digest fields, structured-field interpretation, explicit signing and verification policy, key resolution, replay consumption, and HTTP adapters.",
+        "non_goals": [
+          "Replace TLS, authentication, authorization, capabilities, or application trust decisions."
+        ],
+        "public_package_identifier": "httpsignature",
+        "primary_entry_packages": [
+          "github.com/faustbrian/go-http-signature"
+        ],
+        "package_selection": {
+          "github.com/faustbrian/go-http-signature": "Use for RFC 9421 HTTP Message Signatures, RFC 9530 digest fields, profile policy, replay defense, and net/http signing or verification adapters.",
+          "github.com/faustbrian/go-http-signature/compatibility": "Use only for explicit Cavage, AWS Signature V4, OAuth 1.0, or named vendor protocol callback boundaries that remain isolated from RFC 9421 semantics."
+        },
+        "lifecycle_status": "active",
+        "maturity": "stable",
+        "construction_styles": [
+          "new-config",
+          "plain-function",
+          "validated-value"
+        ],
+        "lifecycle_styles": [
+          "stateless"
+        ],
+        "ownership": {
+          "configuration": "caller",
+          "mutable_inputs": [
+            "borrow",
+            "copy",
+            "transfer"
+          ],
+          "runtime_resources": "shared",
+          "background_work": "none"
+        },
+        "optional_owned_dependencies": [],
+        "adapters": [],
+        "companions": [
+          "github.com/faustbrian/go-http-client",
+          "github.com/faustbrian/go-http-signature/compatibility"
+        ],
+        "supported_go": {
+          "minimum": "1.26.6",
+          "tested": [
+            "1.26.6"
+          ]
+        },
+        "supported_platforms": [
+          "portable-go"
+        ],
+        "supported_backends": [],
+        "supported_protocols": [
+          "http-1-1",
+          "http-2",
+          "rfc-8941",
+          "rfc-9421",
+          "rfc-9530"
+        ],
+        "documentation": {
+          "readme": "README.md",
+          "api": "https://pkg.go.dev/github.com/faustbrian/go-http-signature",
+          "adoption": "docs/integration.md",
+          "security": "docs/security.md",
+          "compatibility": "docs/compatibility.md",
+          "performance": "docs/benchmarks.md",
+          "examples": "example_test.go",
+          "faq": "docs/faq.md",
+          "changelog": "CHANGELOG.md",
+          "pkg_go_dev": "https://pkg.go.dev/github.com/faustbrian/go-http-signature",
+          "ecosystem_index": "https://github.com/faustbrian/go-library-tools/blob/v1.3.0/docs/ecosystem/README.md"
+        },
+        "known_good_compatibility_sets": [],
+        "delivery": {
+          "implementation": "not-started",
+          "hardening": "not-started",
+          "release": "blocked"
+        }
+      },
       "gates": {
         "api_compatibility": true,
         "benchmarks": true,
@@ -107,6 +191,10 @@
       "lifecycle": "internal",
       "kind": "benchmark harness",
       "releasable": false,
+      "family": "protocols-and-descriptions",
+      "family_label": "Protocols And Descriptions",
+      "family_description": "Standards, envelopes, schemas, descriptions, signatures, and wire interoperability.",
+      "family_order": 3,
       "version": "unreleased",
       "tag_prefix": "benchmarks/comparison/v",
       "owned_dependencies": [
@@ -150,6 +238,10 @@
       "lifecycle": "internal",
       "kind": "interoperability harness",
       "releasable": false,
+      "family": "protocols-and-descriptions",
+      "family_label": "Protocols And Descriptions",
+      "family_description": "Standards, envelopes, schemas, descriptions, signatures, and wire interoperability.",
+      "family_order": 3,
       "version": "unreleased",
       "tag_prefix": "differential/shared-corpus/v",
       "owned_dependencies": [

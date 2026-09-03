@@ -115,6 +115,9 @@ Use the [documentation index](docs/README.md) for integration, conformance,
 compatibility, security, benchmarks, and maintenance guidance. Observable
 protocol choices are indexed in the
 [specification decision register](docs/specification-decisions.md).
+Shared construction, ownership, lifecycle, and package-selection conventions
+are documented in the versioned
+[Golib ecosystem index](https://github.com/faustbrian/go-library-tools/blob/v1.3.0/docs/ecosystem/README.md).
 
 ## License
 

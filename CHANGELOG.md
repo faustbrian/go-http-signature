@@ -12,10 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- Publish the module's versioned Golib ecosystem navigation and package-family
+  selection metadata.
 - Replace the archived monorepo link with package-owned documentation.
 
 ### Changed
 
+- Adopt the checksum-verified `go-library-tools` v1.3.0 CLI, schema-v2 cohesion
+  metadata, repository-local cohesion gate, and immutable hosted enforcement.
 - Adopt the checksum-verified `go-library-tools` v1.2.0 CLI and immutable
   shared workflow so local and hosted gates enforce specification governance
   while retaining RFC conformance, interoperability, lifecycle, and
