@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- Bind the ecosystem and protocols-and-descriptions family navigation to the
+  immutable v1.4.0 documentation.
 - Publish the module's versioned Golib ecosystem navigation and package-family
   selection metadata.
 - Replace the archived monorepo link with package-owned documentation.
