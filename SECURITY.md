@@ -2,9 +2,13 @@
 
 ## Reporting
 
-Report suspected vulnerabilities with GitHub's private security-advisory
-workflow. Use generated test keys and sanitized messages. Do not include live
-keys, credentials, nonces, signature bases, message bodies, or resolver output.
+Report suspected vulnerabilities through
+[GitHub private vulnerability reporting](https://github.com/faustbrian/go-http-signature/security/advisories/new).
+Use generated test keys and sanitized messages. Do not include live keys,
+credentials, nonces, signature bases, message bodies, or resolver output.
+
+The published stable-v1 line receives security support. Unreleased
+main-branch behavior is not a supported release.
 
 ## Boundary
 
