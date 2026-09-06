@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- Document the stable-v1 and Go support contract, canonical installation, API
+  and example entry points, and support and security navigation.
 - Bind the ecosystem and protocols-and-descriptions family navigation to the
   immutable v1.4.0 documentation.
 - Publish the module's versioned Golib ecosystem navigation and package-family

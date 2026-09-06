@@ -20,10 +20,12 @@ It does not replace TLS, authentication, authorization, or capabilities. A
 successful verification proves only cryptographic validity and conformance to
 the selected application profile.
 
+Status: stable v1. The module requires Go 1.26.6.
+
 ## Install
 
 ```sh
-go get github.com/faustbrian/go-http-signature@v1
+go get github.com/faustbrian/go-http-signature
 ```
 
 ## Minimal request signing
@@ -115,6 +117,10 @@ Use the [documentation index](docs/README.md) for integration, conformance,
 compatibility, security, benchmarks, and maintenance guidance. Observable
 protocol choices are indexed in the
 [specification decision register](docs/specification-decisions.md).
+The [Go API reference](https://pkg.go.dev/github.com/faustbrian/go-http-signature)
+and [compiler-checked examples](example_test.go) document the public packages.
+Use the [support guide](SUPPORT.md) for questions and defect reports, and the
+[security policy](SECURITY.md) for private vulnerability reporting.
 Shared construction, ownership, lifecycle, and package-selection conventions
 are documented in the versioned
 [Golib ecosystem index](https://github.com/faustbrian/go-library-tools/blob/v1.4.0/docs/ecosystem/README.md)
