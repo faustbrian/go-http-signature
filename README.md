@@ -20,6 +20,13 @@ It does not replace TLS, authentication, authorization, or capabilities. A
 successful verification proves only cryptographic validity and conformance to
 the selected application profile.
 
+## Stability and support
+
+The module has a stable v1 API and requires Go 1.26.6 or newer. Released
+versions are supported according to [COMPATIBILITY.md](COMPATIBILITY.md).
+Use [SUPPORT.md](SUPPORT.md) for reproducible defects, adoption questions, and
+feature proposals; report vulnerabilities through [SECURITY.md](SECURITY.md).
+
 ## Install
 
 ```sh
