@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Documentation
 
+- Clarify root and nested-module tag forms, published stable-v1 support, and
+  direct Issues, Discussions, and private vulnerability-reporting routes.
+- Correct the immutable `v1.0.0` release date to match the tag and published
+  release chronology.
+- Document the stable-v1 and Go support contract, canonical installation, API
+  and example entry points, and support and security navigation.
 - Bind the ecosystem and protocols-and-descriptions family navigation to the
   immutable v1.4.0 documentation.
 - Publish the module's versioned Golib ecosystem navigation and package-family
@@ -60,7 +66,7 @@ HTTP-SIG-DEC-020 sha256:c763717912707df0f61f79f19c7ba4a464ff72ea4311a391c6521a84
 - Reconcile nested benchmark and differential harnesses with the canonical
   `v1.0.0` module archive so isolated module checks remain reproducible.
 
-## [1.0.0] - 2026-08-25
+## [1.0.0] - 2026-08-26
 
 ### Fixed
 

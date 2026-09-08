@@ -2,7 +2,14 @@
 
 ## Getting started
 
+- [Installation and quick start](../README.md#install)
 - [Integration](integration.md)
+- [Compiler-checked examples](../example_test.go)
+
+## API reference
+
+- [Root package](https://pkg.go.dev/github.com/faustbrian/go-http-signature)
+- [Compatibility package](https://pkg.go.dev/github.com/faustbrian/go-http-signature/compatibility)
 
 ## Concepts and design
 
@@ -18,6 +25,8 @@
 - [Security](security.md)
 - [Security review](security-review.md)
 - [Benchmarks](benchmarks.md)
+- [Support](../SUPPORT.md)
+- [Security policy](../SECURITY.md)
 
 ## Reference and maintenance
 
