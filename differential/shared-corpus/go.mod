@@ -1,6 +1,6 @@
 module github.com/faustbrian/go-http-signature/differential/shared-corpus
 
-go 1.26.6
+go 1.27.0
 
 require (
 	github.com/dadrus/httpsig v0.9.1-0.20260717221208-0f24bf7dd9b7

@@ -1,12 +1,12 @@
 {
   "schema_version": 2,
   "repository": "github.com/faustbrian/go-http-signature",
-  "go_version": "1.26.6",
+  "go_version": "1.27.0",
   "modules": [
     {
       "directory": ".",
       "module_path": "github.com/faustbrian/go-http-signature",
-      "go_version": "1.26.6",
+      "go_version": "1.27.0",
       "packages": [
         {
           "module_directory": ".",
@@ -132,9 +132,9 @@
           "github.com/faustbrian/go-http-signature/compatibility"
         ],
         "supported_go": {
-          "minimum": "1.26.6",
+          "minimum": "1.27.0",
           "tested": [
-            "1.26.6"
+            "1.27.0"
           ]
         },
         "supported_platforms": [
@@ -185,7 +185,7 @@
     {
       "directory": "benchmarks/comparison",
       "module_path": "github.com/faustbrian/go-http-signature/benchmarks/comparison",
-      "go_version": "1.26.6",
+      "go_version": "1.27.0",
       "packages": [],
       "purpose": "This non-releasable module isolates the comparison dependency from the public HTTP Message Signatures module. It compares an equivalent HMAC-SHA256 request operation with the maintained `github.com/yaronf/httpsign` implementation at commit `de382d35c1add89cc09b9355161d61471fb7f632` and `github.com/dadrus/httpsig` at commit `0f24bf7dd9b76727af985d9a6f7ce87207a18387`.",
       "lifecycle": "internal",
@@ -232,7 +232,7 @@
     {
       "directory": "differential/shared-corpus",
       "module_path": "github.com/faustbrian/go-http-signature/differential/shared-corpus",
-      "go_version": "1.26.6",
+      "go_version": "1.27.0",
       "packages": [],
       "purpose": "This standalone module executes one checked-in corpus through this module and maintained independent Go implementations. It does not run peer self-tests.",
       "lifecycle": "internal",
