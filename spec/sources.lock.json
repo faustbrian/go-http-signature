@@ -42,28 +42,28 @@
       "name": "IANA HTTP Message Signature registries",
       "kind": "iana-registry",
       "url": "https://www.iana.org/assignments/http-message-signature/http-message-signature.xml",
-      "last_modified": "Mon, 20 Jul 2026 09:11:20 GMT",
+      "last_modified": "Sat, 19 Sep 2026 00:44:28 GMT",
       "sha256": "bd4b0304e21e226fef189ed283a31392b5ffc99a37d00e9911dc011dcfb1523f"
     },
     {
       "name": "IANA Hash Algorithms for HTTP Digest Fields registry",
       "kind": "iana-registry",
       "url": "https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml",
-      "last_modified": "Wed, 22 May 2024 19:55:28 GMT",
+      "last_modified": "Sat, 19 Sep 2026 00:44:40 GMT",
       "sha256": "6336a1abc58420f6fcabab4a0cd999ce3c0a8f12e034e543f05edf342cf927e7"
     },
     {
       "name": "IANA legacy HTTP Digest Algorithm Values registry",
       "kind": "iana-registry",
       "url": "https://www.iana.org/assignments/http-dig-alg/http-dig-alg.xml",
-      "last_modified": "Fri, 16 Feb 2024 22:55:33 GMT",
+      "last_modified": "Sat, 19 Sep 2026 00:44:47 GMT",
       "sha256": "8e2ee05465e8973b63567ef82c9c4f58e56c14a460c288853ce0f90faba027ec"
     },
     {
       "name": "IANA HTTP Field Name registry",
       "kind": "iana-registry",
       "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
-      "last_modified": "Fri, 28 Aug 2026 21:51:21 GMT",
+      "last_modified": "Sat, 19 Sep 2026 00:44:48 GMT",
       "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d"
     },
     {
