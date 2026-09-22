@@ -18,6 +18,9 @@ authorization, trusted proxy configuration, key generation and storage,
 rotation and revocation freshness, durable replay coordination, audit
 redaction, deployment time synchronization, and incident response.
 
+The versioned [repository threat model](docs/security-threat-model.md)
+records the module's assets, trust boundaries, and conditional residual risks.
+
 Run `make check` for module integrity, vulnerability scanning, and the source
 audit.
 
