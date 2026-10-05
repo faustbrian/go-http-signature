@@ -38,7 +38,7 @@ run_peer() {
 run_peer \
     yaronf-httpsign \
     https://github.com/yaronf/httpsign.git \
-    de382d35c1add89cc09b9355161d61471fb7f632 \
+    e27eb95df4d1edf28ea1cab32220546723760aa1 \
     '^(TestVerifyRequest|TestVerifyResponse)$'
 
 run_peer \

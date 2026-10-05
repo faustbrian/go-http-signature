@@ -2,7 +2,10 @@ package comparison_test
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
@@ -42,20 +45,77 @@ type dadrusCandidate struct {
 
 func TestCandidatesSignAndVerifyEquivalentRequestCoverage(t *testing.T) {
 	t.Parallel()
+	for name, signAndVerify := range map[string]func(*http.Request) error{
+		"local":  newLocalCandidate(t).signAndVerify,
+		"yaron":  newPeerCandidate(t).signAndVerify,
+		"dadrus": newDadrusCandidate(t).signAndVerify,
+	} {
+		t.Run(name, func(t *testing.T) {
+			request := benchmarkRequest(t)
+			before := time.Now().Unix()
+			if err := signAndVerify(request); err != nil {
+				t.Fatalf("sign and verify: %v", err)
+			}
+			assertEquivalentSignedOperation(t, request, before, time.Now().Unix())
+		})
+	}
+}
 
+func assertEquivalentSignedOperation(t *testing.T, request *http.Request, before, after int64) {
+	t.Helper()
+	inputs, err := httpsignature.ParseSignatureInputs(request.Header.Values("Signature-Input"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	signatures, err := httpsignature.ParseSignatures(request.Header.Values("Signature"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries, values := inputs.Entries(), signatures.Entries()
+	if len(entries) != 1 || len(values) != 1 || entries[0].Label != "sig" || values[0].Label != "sig" {
+		t.Fatal("want exactly one matching sig field pair")
+	}
+	input := entries[0]
+	if len(input.Components) != 3 {
+		t.Fatalf("covered components = %#v", input.Components)
+	}
+	for index, name := range []string{"@method", "@authority", "content-type"} {
+		if input.Components[index].Name != name || len(input.Components[index].Parameters) != 0 {
+			t.Fatalf("component %d = %#v, want %s without parameters", index, input.Components[index], name)
+		}
+	}
+	created, ok := input.Parameter("created")
+	stamp, integer := created.(int64)
+	if !ok || !integer || stamp < before || stamp > after {
+		t.Fatalf("created = %#v, want signing interval [%d, %d]", created, before, after)
+	}
+	for name, want := range map[string]string{"keyid": "benchmark-key", "alg": "hmac-sha256"} {
+		if value, present := input.Parameter(name); !present || value != want {
+			t.Fatalf("%s = %#v, want %q", name, value, want)
+		}
+	}
+	if len(input.Parameters) != 3 || len(values[0].Parameters) != 0 {
+		t.Fatal("unexpected signature parameters")
+	}
+	// Fixed component bytes and standard-library HMAC do not trust candidate verification.
+	base := "\"@method\": POST\n\"@authority\": api.example.test\n\"content-type\": application/json\n\"@signature-params\": " + strings.TrimPrefix(inputs.String(), "sig=")
+	mac := hmac.New(sha256.New, benchmarkKey)
+	_, _ = mac.Write([]byte(base))
+	if !hmac.Equal(mac.Sum(nil), values[0].Value) {
+		t.Fatal("signature does not authenticate the equivalent operation")
+	}
+}
+
+func TestPeerVerificationRejectsCoveredHeaderTampering(t *testing.T) {
+	t.Parallel()
+	candidate := newPeerCandidate(t)
 	request := benchmarkRequest(t)
-	if err := newLocalCandidate(t).signAndVerify(request); err != nil {
-		t.Fatalf("local sign and verify: %v", err)
+	if err := candidate.signAndVerify(request); err != nil {
+		t.Fatal(err)
 	}
-
-	request = benchmarkRequest(t)
-	if err := newPeerCandidate(t).signAndVerify(request); err != nil {
-		t.Fatalf("peer sign and verify: %v", err)
-	}
-
-	request = benchmarkRequest(t)
-	if err := newDadrusCandidate(t).signAndVerify(request); err != nil {
-		t.Fatalf("dadrus sign and verify: %v", err)
+	request.Header.Set("Content-Type", "text/plain")
+	if err := peer.VerifyRequest("sig", *candidate.verifier, request); err == nil {
+		t.Fatal("peer verified modified covered content-type without re-signing")
 	}
 }
 
