@@ -3,7 +3,7 @@
 This non-releasable module isolates the comparison dependency from the public
 HTTP Message Signatures module. It compares an equivalent HMAC-SHA256 request
 operation with the maintained `github.com/yaronf/httpsign` implementation at
-commit `de382d35c1add89cc09b9355161d61471fb7f632` and
+commit `e27eb95df4d1edf28ea1cab32220546723760aa1` and
 `github.com/dadrus/httpsig` at commit
 `0f24bf7dd9b76727af985d9a6f7ce87207a18387`.
 
