@@ -28,9 +28,10 @@ updates `Content-Digest` while signing.
 
 | Peer | Exact divergence | Specification analysis | Security impact and chosen behavior |
 |---|---|---|---|
-| `shogo82148/go-sfv` `v0.3.3` | A duplicate dictionary label is accepted and the later member replaces the earlier member. | The generic Structured Fields dictionary parsing algorithm has replacement semantics; RFC 9421 labels still identify security inputs consumed by an application. | Replacement can hide label shadowing from a verifier. The RFC 9421 path rejects duplicate labels before generic parsing. |
-| `shogo82148/go-sfv` `v0.3.3` | Repeated component identifiers remain valid inner-list items. | Generic Structured Fields does not impose RFC 9421 component-coverage semantics. | Repetition can create canonicalization differentials. The RFC 9421 path rejects identical component identifiers. |
-| `shogo82148/go-sfv` `v0.3.3` | A decimal dictionary value is valid generic SFV but invalid as an integrity preference. | RFC 9530 integrity preferences use integer weights from 0 through 10, a semantic constraint outside generic SFV. | A decimal could produce peer-dependent negotiation. The RFC 9530 parser rejects it. |
+| `shogo82148/go-sfv` `v0.3.4` | A duplicate dictionary label is accepted and the later member replaces the earlier member. | The generic Structured Fields dictionary parsing algorithm has replacement semantics; RFC 9421 labels still identify security inputs consumed by an application. | Replacement can hide label shadowing from a verifier. The RFC 9421 path rejects duplicate labels before generic parsing. |
+| `shogo82148/go-sfv` `v0.3.4` | Repeated component identifiers remain valid inner-list items. | Generic Structured Fields does not impose RFC 9421 component-coverage semantics. | Repetition can create canonicalization differentials. The RFC 9421 path rejects identical component identifiers. |
+| `shogo82148/go-sfv` `v0.3.4` | A decimal dictionary value is valid generic SFV but invalid as an integrity preference. | RFC 9530 integrity preferences use integer weights from 0 through 10, a semantic constraint outside generic SFV. | A decimal could produce peer-dependent negotiation. The RFC 9530 parser rejects it. |
+| `shogo82148/go-sfv` `v0.3.4` | Excess trailing Base64 padding is accepted: `sig=:AQI==:` becomes `sig=:AQI=:`. | The peer strips trailing padding before decoding. This is an observed implementation difference, not a claim that RFC 8941 categorically forbids excess padding. | Peer acceptance does not broaden the owned parser policy. The local parser retains excess-padding rejection; the corpus asserts local rejection, peer acceptance and the exact peer canonical form. |
 
 ## Pinned peers
 
@@ -38,7 +39,7 @@ updates `Content-Digest` while signing.
 |---|---|---|
 | `yaronf/httpsign` | `v0.5.3-0.20260728182352-de382d35c1ad` | `de382d35c1add89cc09b9355161d61471fb7f632` |
 | `dadrus/httpsig` | `v0.9.1-0.20260717221208-0f24bf7dd9b7` | `0f24bf7dd9b76727af985d9a6f7ce87207a18387` |
-| `shogo82148/go-sfv` | `v0.3.3` | module tag and `go.sum` checksum |
+| `shogo82148/go-sfv` | `v0.3.4` | module tag and `go.sum` checksum |
 
 The checked-in module has no `replace` directives. The disposable gate creates
 a temporary workspace containing only the harness and implementation under
