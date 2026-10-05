@@ -63,6 +63,9 @@ HTTP-SIG-DEC-020 sha256:c763717912707df0f61f79f19c7ba4a464ff72ea4311a391c6521a84
 
 ### Fixed
 
+- Keep dictionary, list, and item dependency panic containment under one
+  fail-closed owner with deterministic fault coverage, preserving ordinary
+  parser results and RFC 8941 normalization.
 - Reconcile nested benchmark and differential harnesses with the canonical
   `v1.0.0` module archive so isolated module checks remain reproducible.
 

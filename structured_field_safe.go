@@ -18,33 +18,28 @@ var (
 // untrusted HTTP fields into ordinary parse failures without hiding panics in
 // this package's own semantic validation.
 func unmarshalStructuredDictionary(values []string) (dictionary *httpsfv.Dictionary, err error) {
-	defer func() {
-		if recover() != nil {
-			dictionary, err = nil, errStructuredFieldParse
-		}
-	}()
-	combined := normalizeStructuredFieldOWS(combineStructuredFieldLines(values))
-	return httpsfv.UnmarshalDictionary(normalizeRFC8941BinaryValues(combined))
+	return unmarshalStructuredField(values, httpsfv.UnmarshalDictionary)
 }
 
 func unmarshalStructuredList(values []string) (list httpsfv.List, err error) {
-	defer func() {
-		if recover() != nil {
-			list, err = nil, errStructuredFieldParse
-		}
-	}()
-	combined := normalizeStructuredFieldOWS(combineStructuredFieldLines(values))
-	return httpsfv.UnmarshalList(normalizeRFC8941BinaryValues(combined))
+	return unmarshalStructuredField(values, httpsfv.UnmarshalList)
 }
 
 func unmarshalStructuredItem(values []string) (item httpsfv.Item, err error) {
+	return unmarshalStructuredField(values, httpsfv.UnmarshalItem)
+}
+
+// One recovery owner preserves the fail-closed result for every parser shape,
+// independently of whether the pinned supplier still has a known panic input.
+func unmarshalStructuredField[T any](values []string, parse func([]string) (T, error)) (value T, err error) {
 	defer func() {
 		if recover() != nil {
-			item, err = httpsfv.Item{}, errStructuredFieldParse
+			var zero T
+			value, err = zero, errStructuredFieldParse
 		}
 	}()
 	combined := normalizeStructuredFieldOWS(combineStructuredFieldLines(values))
-	return httpsfv.UnmarshalItem(normalizeRFC8941BinaryValues(combined))
+	return parse(normalizeRFC8941BinaryValues(combined))
 }
 
 // RFC 8941 Section 4.2 requires multiple field lines to be combined by

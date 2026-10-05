@@ -8,20 +8,23 @@ import (
 	"github.com/dunglas/httpsfv"
 )
 
-func TestStructuredFieldDependencyPanicsBecomeParseErrors(t *testing.T) {
+func TestStructuredFieldMalformedExtensionsRemainRejected(t *testing.T) {
 	t.Parallel()
 
 	malformedItem := `%"00000000000000"0000`
-	if _, err := ParseSignatureInputs([]string{"sig=" + malformedItem}); !errors.Is(err, ErrInvalidSignatureInput) {
+	if value, err := ParseSignatureInputs([]string{"sig=" + malformedItem}); !errors.Is(err, ErrInvalidSignatureInput) || len(value.Entries()) != 0 {
 		t.Fatalf("ParseSignatureInputs() error = %v, want ErrInvalidSignatureInput", err)
 	}
-	if _, err := ParseSignatures([]string{"sig=" + malformedItem}); !errors.Is(err, ErrInvalidSignature) {
+	if value, err := ParseAcceptSignatures([]string{"sig=" + malformedItem}); !errors.Is(err, ErrInvalidAcceptSignature) || len(value.Entries()) != 0 {
+		t.Fatalf("ParseAcceptSignatures() error = %v, want ErrInvalidAcceptSignature and no entries", err)
+	}
+	if value, err := ParseSignatures([]string{"sig=" + malformedItem}); !errors.Is(err, ErrInvalidSignature) || len(value.Entries()) != 0 {
 		t.Fatalf("ParseSignatures() error = %v, want ErrInvalidSignature", err)
 	}
-	if _, err := ParseDigestField("sha-256=" + malformedItem); !errors.Is(err, ErrInvalidDigestField) {
+	if value, err := ParseDigestField("sha-256=" + malformedItem); !errors.Is(err, ErrInvalidDigestField) || len(value.Entries()) != 0 {
 		t.Fatalf("ParseDigestField() error = %v, want ErrInvalidDigestField", err)
 	}
-	if _, err := ParseDigestPreferences([]string{"sha-256=" + malformedItem}); !errors.Is(err, ErrInvalidDigestPreferences) {
+	if value, err := ParseDigestPreferences([]string{"sha-256=" + malformedItem}); !errors.Is(err, ErrInvalidDigestPreferences) || len(value.Entries()) != 0 {
 		t.Fatalf("ParseDigestPreferences() error = %v, want ErrInvalidDigestPreferences", err)
 	}
 	if _, err := strictStructuredField([]string{"a, " + malformedItem}, StructuredFieldList); err == nil {
