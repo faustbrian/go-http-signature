@@ -91,6 +91,18 @@
       "canonical": "sig=:AQI=:"
     },
     {
+      "name": "excess binary padding remains an explicit peer differential",
+      "kind": "signature",
+      "fields": [
+        "sig=:AQI==:"
+      ],
+      "valid": false,
+      "canonical": "",
+      "peer_valid": true,
+      "peer_canonical": "sig=:AQI=:",
+      "divergence": "excess-base64-padding-peer-permissiveness"
+    },
+    {
       "name": "rfc9530 rejects generic sf decimal preference",
       "kind": "digest-preference",
       "fields": [
