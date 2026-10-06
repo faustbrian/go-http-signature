@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Update the comparison and shared-corpus HMAC peer to httpsign v0.6.2,
+  retaining the independently pinned historical official-vector suites.
+
 - Adopt the checksum-verified `go-library-tools` v1.3.0 CLI, schema-v2 cohesion
   metadata, repository-local cohesion gate, and immutable hosted enforcement.
 - Adopt the checksum-verified `go-library-tools` v1.4.0 CLI and public-first
