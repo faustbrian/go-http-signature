@@ -3,7 +3,7 @@ module github.com/faustbrian/go-http-signature
 go 1.27.0
 
 require (
-	github.com/dunglas/httpsfv v1.1.1
+	github.com/dunglas/httpsfv v1.1.2
 	go.uber.org/goleak v1.3.0
 )
 
