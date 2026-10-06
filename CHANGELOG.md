@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2026-10-06
 
+### Security
+
+- Reject unsupported Structured Fields values throughout key-selected
+  dictionaries and propagate member serialization failures. Invalid fields
+  cannot collapse to the authenticated representation of Boolean true.
+- Preserve valued parameters on key-selected Boolean true members so they
+  cannot authenticate a different valid dictionary value. Signatures made
+  with the old valued-parameter projection must be regenerated; applications
+  using that case should upgrade their signer and verifier together.
+
 ### Documentation
 
 - Clarify root and nested-module tag forms, published stable-v1 support, and

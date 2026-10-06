@@ -84,7 +84,8 @@ Authoritative source URL: https://www.rfc-editor.org/rfc/rfc8941.txt
   rejection of RFC 9651-only peers. The wire consequence is canonical RFC 8941
   serialization only.
 - **Evidence, public surface, upstream, and reconsideration:**
-  `TestHTTPWGRFC8941Corpus`, `TestStructuredFieldDependencyPanicsBecomeParseErrors`,
+  `TestHTTPWGRFC8941Corpus`, `TestStructuredFieldMalformedExtensionsRemainRejected`,
+  `TestStructuredFieldParserFaultContainment`,
   and `TestStrictStructuredFieldsRejectRFC9651OnlyValues` cover all public
   parse and serialization entry points. There is no unresolved upstream issue;
   reconsider when the package deliberately adopts a newer Structured Fields

@@ -38,13 +38,13 @@ validation outside that dependency boundary is not recovered.
 ## Concurrency, faults, and lifetime
 
 The core starts no goroutines. `goleak.VerifyTestMain` covers both production
-packages. `make stress` repeatedly races atomic nonce consumption and
-cancellation; `make soak` repeats deterministic signing, verification, and
-expiry transitions; `make fault` selects injected reader, resolver, replay,
-callback, body-limit, trailer, and transport failures. `make
-lifecycle` runs shared-verifier rotation, revocation, cache-refresh race,
+packages. `make check` includes supplemental stress checks for atomic nonce
+consumption and cancellation, soak checks for deterministic signing,
+verification, and expiry transitions, and fault checks for injected reader,
+resolver, replay, callback, body-limit, trailer, and transport failures.
+Its lifecycle checks run shared-verifier rotation, revocation, cache-refresh,
 resolver outage, replay unknown-commit, cancellation, and shutdown scenarios
-under the race detector. `make race` retains the complete race-detector gate.
+under the race detector. The complete race-detector gate remains included.
 Parser limits, body limits, replay capacity and TTL, resolver and replay
 deadlines, validity intervals, and cache freshness are all mandatory
 configuration rather than hidden defaults.
