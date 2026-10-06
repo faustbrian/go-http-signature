@@ -37,7 +37,7 @@ updates `Content-Digest` while signing.
 
 | Boundary | Version | Source revision |
 |---|---|---|
-| `yaronf/httpsign` | `v0.6.0` | `e27eb95df4d1edf28ea1cab32220546723760aa1` |
+| `yaronf/httpsign` | `v0.6.2` | `92de25a5bd48893923ac1233632a884d09bfee84` |
 | `dadrus/httpsig` | `v0.9.1-0.20260717221208-0f24bf7dd9b7` | `0f24bf7dd9b76727af985d9a6f7ce87207a18387` |
 | `shogo82148/go-sfv` | `v0.3.4` | module tag and `go.sum` checksum |
 
