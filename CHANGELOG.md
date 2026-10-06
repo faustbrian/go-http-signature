@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-06
+
+### Security
+
+- Reject unsupported Structured Fields values throughout key-selected
+  dictionaries and propagate member serialization failures. Invalid fields
+  cannot collapse to the authenticated representation of Boolean true.
+- Preserve valued parameters on key-selected Boolean true members so they
+  cannot authenticate a different valid dictionary value. Signatures made
+  with the old valued-parameter projection must be regenerated; applications
+  using that case should upgrade their signer and verifier together.
+
 ### Documentation
 
 - Clarify root and nested-module tag forms, published stable-v1 support, and
@@ -25,6 +37,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace the archived monorepo link with package-owned documentation.
 
 ### Changed
+
+- Require Go 1.27.0 or newer for the published module. Callers using
+  Go 1.26 must upgrade their toolchain before adopting this release or
+  retain v1.0.0. Public API signatures remain unchanged.
 
 - Update the comparison and shared-corpus HMAC peer to httpsign v0.6.2,
   retaining the independently pinned historical official-vector suites.
@@ -236,5 +252,6 @@ HTTP-SIG-DEC-020 sha256:c763717912707df0f61f79f19c7ba4a464ff72ea4311a391c6521a84
   output failures; `MapError` remains responsible only for failures that can be
   mapped before response commitment.
 
-[Unreleased]: https://github.com/faustbrian/go-http-signature/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/faustbrian/go-http-signature/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/faustbrian/go-http-signature/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/faustbrian/go-http-signature/releases/tag/v1.0.0

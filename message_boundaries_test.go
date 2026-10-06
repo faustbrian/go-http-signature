@@ -1204,8 +1204,8 @@ func TestFieldAndStructuredSerializationBoundaries(t *testing.T) {
 		}
 	}
 	member, _ := httpsfv.UnmarshalItem([]string{"?1;a"})
-	if value := marshalMember(member); value != "?1;a" {
-		t.Fatalf("marshalMember(bare true) = %q", value)
+	if value, err := marshalMember(member); err != nil || value != "?1;a" {
+		t.Fatalf("marshalMember(bare true) = %q, %v", value, err)
 	}
 	if _, err := serializeComponentIdentifier(ComponentIdentifier{Name: "@method", Parameters: []Parameter{{Name: "UPPER", Value: true}}}); err == nil {
 		t.Fatal("invalid component serialization succeeded")
@@ -1466,5 +1466,13 @@ func TestRequestPartsRejectsEachMalformedTargetBoundary(t *testing.T) {
 		if _, err := requestParts(test.request, test.external); err == nil {
 			t.Fatalf("requestParts(%q, %#v) succeeded", test.request.RequestURI, test.external)
 		}
+	}
+}
+
+func TestMarshalMemberPropagatesRFC8941Errors(t *testing.T) {
+	t.Parallel()
+	member := httpsfv.NewItem(time.Unix(1, 0))
+	if value, err := marshalMember(member); err == nil || value != "" {
+		t.Fatalf("unsupported member serialized as %q, %v", value, err)
 	}
 }

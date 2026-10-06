@@ -372,14 +372,14 @@ func resolveField(context MessageContext, name string, parameters componentParam
 
 	if parameters.hasKey {
 		dictionary, parseErr := unmarshalStructuredDictionary(normalized)
-		if parseErr != nil {
+		if parseErr != nil || !isRFC8941StructuredField(dictionary) {
 			return "", errors.New("covered dictionary field is malformed")
 		}
 		member, found := dictionary.Get(parameters.key)
 		if !found {
 			return "", errors.New("covered dictionary member is absent")
 		}
-		return marshalMember(member), nil
+		return marshalMember(member)
 	}
 
 	if parameters.sf {
@@ -1244,15 +1244,17 @@ func isRFC8941BareItem(value any) bool {
 	}
 }
 
-func marshalMember(member httpsfv.Member) string {
+func marshalMember(member httpsfv.Member) (string, error) {
 	dictionary := httpsfv.NewDictionary()
 	dictionary.Add("x", member)
-	serialized, _ := marshalRFC8941(dictionary)
-	separator := strings.IndexByte(serialized, '=')
-	if separator == -1 {
-		return "?1" + strings.TrimPrefix(serialized, "x")
+	serialized, err := marshalRFC8941(dictionary)
+	if err != nil {
+		return "", err
 	}
-	return serialized[separator+1:]
+	if value, assigned := strings.CutPrefix(serialized, "x="); assigned {
+		return value, nil
+	}
+	return "?1" + strings.TrimPrefix(serialized, "x"), nil
 }
 
 func serializeComponentIdentifier(component ComponentIdentifier) (string, error) {
