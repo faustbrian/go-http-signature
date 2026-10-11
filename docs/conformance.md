@@ -14,7 +14,7 @@ documentation. This section-level prose inventory covers normative algorithms,
 definitions, and security requirements that do not use BCP 14 keywords; it
 does not misleadingly recast every prose sentence as a separate requirement.
 The tables below summarize those mappings by protocol topic. The conformance
-portion of `make check`
+portion of `make check-full`
 verifies that no inventoried keyword occurrence, ABNF production, or prose
 section was added, omitted, duplicated, or mapped to a missing artifact.
 This is exhaustive source traceability, not a substitute for behavioral proof:
@@ -34,7 +34,7 @@ behavior.
 
 ## Authoritative source inventory
 
-The conformance portion of `make check` validates the byte identity of the
+The conformance portion of `make check-full` validates the byte identity of the
 three RFC texts, all three RFC Editor errata searches, the IANA XML registries,
 Structured Fields corpus snapshot, and the NIST CAVP ECDSA corpus. It also
 compares the following machine-readable inventories in `sources.lock.json`
@@ -55,7 +55,7 @@ against the fetched sources:
 - The HTTPWG corpus is pinned at revision
   `faed1f92942abd4fb5d61b1f9f0dc359f499f1d7`, the last revision explicitly
   targeting RFC 8941 before later RFC 9651-only types. The conformance portion
-  of `make check`
+  of `make check-full`
   checksum-validates and safely extracts that archive, then executes all 1,526
   parsing cases and all 544 serialization cases through the package's strict
   Structured Fields boundary. Source locking proves provenance and identity;
