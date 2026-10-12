@@ -59,7 +59,10 @@ func combineStructuredFieldLines(values []string) []string {
 // and recommends accepting non-zero pad bits. httpsfv v1.1.0 delegates only to
 // padded base64 decoding, so canonicalize byte-sequence bare items before
 // parsing. The boundary check prevents token and String contents from being
-// reinterpreted as byte sequences.
+// reinterpreted as byte sequences. This compatibility boundary remains explicit
+// under the pinned supplier: TestRFC8941ParsersNormalizePermittedBinaryVariations
+// protects its output. Remove only with equivalent RFC 8941 regression/corpus
+// behavior, not merely a supplier version change.
 func normalizeRFC8941BinaryValues(values []string) []string {
 	var normalized []string
 	for index, value := range values {
@@ -171,7 +174,9 @@ func marshalRFC8941(value httpsfv.StructuredFieldValue) (string, error) {
 // an empty fractional part ("1.") instead of RFC 8941's required "1.0". The
 // dependency has already validated and serialized the typed model here; this
 // scanner repairs only an empty fraction at a numeric bare-item boundary and
-// deliberately skips quoted strings and token text.
+// deliberately skips quoted strings and token text. The retained policy is
+// protected by TestRFC8941SerializersKeepIntegralDecimalFraction; removing the
+// repair requires equivalent supported supplier serialization, not a version guess.
 func restoreRFC8941IntegralDecimals(serialized string) string {
 	var result strings.Builder
 	result.Grow(len(serialized))

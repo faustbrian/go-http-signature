@@ -27,10 +27,12 @@ validation outside that dependency boundary is not recovered.
 - HMAC signatures and digest bytes use `subtle.ConstantTimeCompare` after an
   explicit public length check. Algorithm, label, coverage, timestamp, and key
   selection are public policy inputs and are rejected before cryptographic use.
-- Error values disclose a coarse category only. They do not render key IDs,
-  nonce values, signature bases, signatures, bodies, key material, or backend
-  failures. Resolver and replay causes are reduced to cancellation, deadline,
-  or a generic backend category.
+- Core-created high-level failures render fixed categories without key IDs,
+  nonce values, bases, signatures, bodies or backend diagnostics. Caller-set
+  `VerificationError.Failure` is not sanitized; direct primitive/parser errors
+  can include supplied algorithm names or field labels. Redact those inputs
+  rather than treating every constructed error as privacy-safe. Resolver and
+  replay causes retain only safe policy/context or generic backend categories.
 - Go does not guarantee key zeroization. `HMACKey` copies input material to
   prevent aliasing, but applications must still keep keys out of logs, dumps,
   and long-lived process state.

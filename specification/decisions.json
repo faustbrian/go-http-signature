@@ -245,7 +245,7 @@
         "Apply the explicit package behavior recorded by this decision."
       ],
       "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
-      "selected_behavior": "The @query-param component uses Go form parsing and preserves decoded duplicate values in received order.",
+      "selected_behavior": "The @query-param component uses the maintained HTML-form decoder: plus becomes space, valid percent escapes decode, malformed escapes remain literal and invalid UTF-8 is replaced. The requested name is matched in canonical form encoding; exactly one matching decoded occurrence is required, with empty values allowed and missing or repeated matches rejected.",
       "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
       "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
       "resource_consequences": "Processing and retained state remain within documented finite bounds.",

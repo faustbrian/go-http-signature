@@ -15,8 +15,12 @@ var ErrInvalidDigestPreferences = errors.New("http signature: invalid digest pre
 // Want-Content-Digest or Want-Repr-Digest field. Weight is in the inclusive
 // range 0 through 10; zero means not acceptable.
 type DigestPreference struct {
+	// Algorithm is a syntactically valid digest key; unknown names are retained rather
+	// than automatically computed.
 	Algorithm DigestAlgorithm
-	Weight    int64
+	// Weight is inclusive 0–10 relative preference; zero refuses and equal weights add
+	// no tie-break rule.
+	Weight int64
 }
 
 // DigestPreferences is an immutable ordered RFC 9530 integrity preference

@@ -18,7 +18,9 @@ import (
 	"math/big"
 )
 
-// Algorithm is an active IANA HTTP Signature Algorithms registry key.
+// Algorithm names an HTTP Signature Algorithms registry entry. Sign/Verify
+// support the constants below under the reviewed pinned registry, not arbitrary
+// new names or automatic negotiation (HTTP-SIG-DEC-010).
 type Algorithm string
 
 const (
@@ -62,7 +64,9 @@ type HMACKey struct {
 	material []byte
 }
 
-// NewHMACKey copies caller key material and enforces the HMACKey size bounds.
+// NewHMACKey copies 32–64 secret bytes; invalid size returns zero and
+// ErrIncompatibleKey. The immutable value can be shared, but copied secrets are
+// not securely erased. This bound is local registered-algorithm policy.
 func NewHMACKey(material []byte) (HMACKey, error) {
 	if len(material) < minHMACKeySize || len(material) > maxHMACKeySize {
 		return HMACKey{}, ErrIncompatibleKey
@@ -74,7 +78,11 @@ func NewHMACKey(material []byte) (HMACKey, error) {
 // Sign applies the exact RFC 9421 algorithm to signatureBase. RSA moduli must
 // contain 2048 through 8192 bits. Randomized algorithms use Go-managed
 // cryptographically secure randomness. random is retained for source
-// compatibility and ignored.
+// compatibility and ignored. Key objects and base bytes are borrowed for the
+// call and must remain immutable; output bytes are owned. Context is checked
+// before/after synchronous crypto, not during it. There is no base-length cap
+// here: use CreateSignatureBase for bounded message canonicalization. Errors
+// exclude key/base data but unsupported-algorithm errors include caller text.
 func Sign(ctx context.Context, algorithm Algorithm, key any, signatureBase []byte, random io.Reader) ([]byte, error) {
 	if err := contextError(ctx); err != nil {
 		return nil, err
@@ -145,8 +153,11 @@ func finishSignature(ctx context.Context, signature []byte, err error) ([]byte, 
 	return signature, nil
 }
 
-// Verify applies the exact RFC 9421 algorithm and returns only typed,
-// secret-safe errors. RSA moduli must contain 2048 through 8192 bits.
+// Verify applies the configured RFC 9421 primitive over borrowed immutable
+// base/signature/key data. Typed errors exclude key/base bytes; unsupported
+// algorithm errors include that caller-supplied string. RSA moduli must contain
+// 2048 through 8192 bits. Context is checked before/after synchronous work, not
+// forcibly during it; there is no direct base-length limit or resolver policy.
 // Verification keys must be public key types; RSA or ECDSA private keys are
 // deliberately rejected.
 func Verify(ctx context.Context, algorithm Algorithm, key any, signatureBase, signature []byte) error {

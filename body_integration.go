@@ -35,15 +35,23 @@ var (
 // generation. It hashes the HTTP content bytes presented to the transport,
 // after any application-managed content coding.
 type BufferedContentDigestRoundTripperConfig struct {
-	Transport  http.RoundTripper
+	// Transport is mandatory borrowed RoundTripper; callers own timeout, redirects,
+	// connections and concurrency.
+	Transport http.RoundTripper
+	// Algorithms is copied nonempty unique SHA256/SHA512 computation policy.
 	Algorithms []DigestAlgorithm
-	MaxBytes   int64
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
 }
 
 // BufferedContentDigestRoundTripper consumes and closes the caller request
 // body, then delegates a cloned request with a replayable buffered body. It is
 // intended to wrap a SigningRoundTripper when Content-Digest must be covered:
 // digest transport outside, signing transport inside, network transport last.
+// Construct with NewBufferedContentDigestRoundTripper; zero is not usable. Shared calls require
+// safe borrowed transports/callbacks. No connection close, retry worker or
+// callback panic containment is owned by the adapter.
 type BufferedContentDigestRoundTripper struct {
 	transport  http.RoundTripper
 	algorithms []DigestAlgorithm
@@ -51,7 +59,8 @@ type BufferedContentDigestRoundTripper struct {
 }
 
 // NewBufferedContentDigestRoundTripper validates explicit algorithms and a
-// positive resource limit.
+// positive resource limit. Algorithms are copied; transport remains borrowed.
+// Typed nil is not detected. No worker or connection lifecycle is started.
 func NewBufferedContentDigestRoundTripper(config BufferedContentDigestRoundTripperConfig) (*BufferedContentDigestRoundTripper, error) {
 	if config.Transport == nil || config.MaxBytes <= 0 {
 		return nil, ErrInvalidBodyIntegration
@@ -117,16 +126,25 @@ func (transport *BufferedContentDigestRoundTripper) RoundTrip(request *http.Requ
 // Content-Digest verification. MapError owns application-specific HTTP status
 // and disclosure behavior.
 type BufferedContentDigestVerificationMiddlewareConfig struct {
+	// RequiredAlgorithms is copied nonempty unique SHA256/SHA512 verification policy,
+	// not negotiated from untrusted fields.
 	RequiredAlgorithms []DigestAlgorithm
-	MaxBytes           int64
-	MapError           func(http.ResponseWriter, *http.Request, error)
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
+	// MapError is mandatory synchronous application failure rendering; it may receive
+	// nil request and must redact safely.
+	MapError func(http.ResponseWriter, *http.Request, error)
 }
 
 // BufferedContentDigestVerificationMiddleware wraps an http.Handler.
 type BufferedContentDigestVerificationMiddleware func(http.Handler) http.Handler
 
 // NewBufferedContentDigestVerificationMiddleware validates an explicit,
-// bounded inbound digest policy.
+// bounded inbound digest policy. Algorithms are copied; synchronous MapError
+// stays borrowed. Digest comparison alone is not origin authentication: compose
+// explicit signature coverage of Content-Digest. Read/Close is cooperative and
+// success gives next an owned replayable body, not business authorization.
 func NewBufferedContentDigestVerificationMiddleware(config BufferedContentDigestVerificationMiddlewareConfig) (BufferedContentDigestVerificationMiddleware, error) {
 	if config.MaxBytes <= 0 || config.MapError == nil {
 		return nil, ErrInvalidBodyIntegration
@@ -177,6 +195,10 @@ func NewBufferedContentDigestVerificationMiddleware(config BufferedContentDigest
 	}, nil
 }
 
+// Read/Close are cooperative: context checks cannot interrupt a blocked Read.
+// One 32 KiB chunk may be consumed beyond remaining allowance before refusal;
+// only admitted bytes are retained. Close always runs for non-nil body and its
+// failure invalidates prior success (TestReadBoundedAndCloseBoundaryFailures).
 func readBoundedAndClose(ctx context.Context, body io.ReadCloser, maxBytes int64) (result []byte, resultErr error) {
 	if body == nil {
 		return []byte{}, nil
@@ -228,12 +250,24 @@ func closeRequestBody(request *http.Request) {
 // emits Content-Digest, Signature-Input, and Signature in trailers after EOF.
 // The signing profile must cover content-digest with the tr parameter.
 type TrailerSigningRoundTripperConfig struct {
-	Transport       http.RoundTripper
-	Signer          *Signer
-	Label           string
-	Algorithms      []DigestAlgorithm
-	MaxBytes        int64
-	Options         func(context.Context, *http.Request) (SigningOptions, error)
+	// Transport is mandatory borrowed RoundTripper; callers own timeout, redirects,
+	// connections and concurrency.
+	Transport http.RoundTripper
+	// Signer is mandatory borrowed constructed signer; shared use depends on safe
+	// profile collaborators.
+	Signer *Signer
+	// Label is an explicit valid SF dictionary key, never chosen by map iteration.
+	Label string
+	// Algorithms is copied nonempty unique SHA256/SHA512 computation policy.
+	Algorithms []DigestAlgorithm
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
+	// Options runs on the original request at EOF; own nonce freshness and do not mutate
+	// covered state.
+	Options func(context.Context, *http.Request) (SigningOptions, error)
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
 	ExternalContext func(context.Context, *http.Request) (*ExternalRequestContext, error)
 }
 
@@ -241,6 +275,9 @@ type TrailerSigningRoundTripperConfig struct {
 // does not pre-read the body. Size, hash, key, or signing failure during Read
 // aborts the attempt; bytes returned by earlier reads may already be on wire.
 // A response is released only after EOF finalization succeeds.
+// Construct with NewTrailerSigningRoundTripper; zero is not usable. Shared calls require
+// safe borrowed transports/callbacks. No connection close, retry worker or
+// callback panic containment is owned by the adapter.
 type TrailerSigningRoundTripper struct {
 	transport       http.RoundTripper
 	signer          *Signer
@@ -605,13 +642,25 @@ func sameTrailerNames(left, right map[string]struct{}) bool {
 // ReportError is required because a size, handler-write, key, randomness, or
 // signing failure can occur after response bytes have already been emitted.
 type TrailerResponseSigningMiddlewareConfig struct {
-	Signer          *Signer
-	Label           string
-	Algorithms      []DigestAlgorithm
-	MaxBytes        int64
-	Options         func(context.Context, *http.Request) (SigningOptions, error)
+	// Signer is mandatory borrowed constructed signer; shared use depends on safe
+	// profile collaborators.
+	Signer *Signer
+	// Label is an explicit valid SF dictionary key, never chosen by map iteration.
+	Label string
+	// Algorithms is copied nonempty unique SHA256/SHA512 computation policy.
+	Algorithms []DigestAlgorithm
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
+	// Options is a mandatory synchronous borrowed per-message callback; support
+	// concurrency, bound work and avoid body/message mutation.
+	Options func(context.Context, *http.Request) (SigningOptions, error)
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
 	ExternalContext func(context.Context, *http.Request) (*ExternalRequestContext, error)
-	ReportError     func(*http.Request, error)
+	// ReportError is mandatory synchronous diagnostic reporting; bound work and redact,
+	// including after response commitment.
+	ReportError func(*http.Request, error)
 }
 
 // TrailerResponseSigningMiddleware wraps an http.Handler. Recipients must wait
@@ -1010,12 +1059,24 @@ func removeTrailerSigningFields(header http.Header) {
 // BufferedTrailerVerificationMiddlewareConfig defines eager processing for a
 // request whose Content-Digest and message signature arrive in trailers.
 type BufferedTrailerVerificationMiddlewareConfig struct {
-	Verifier           *Verifier
-	SelectLabel        func(*http.Request, SignatureInputs, Signatures) (string, error)
+	// Verifier is mandatory borrowed constructed verifier; it verifies policy, not
+	// protected business effects.
+	Verifier *Verifier
+	// SelectLabel must explicitly select a valid actual label from parsed fields;
+	// snapshot inputs do not confer authority.
+	SelectLabel func(*http.Request, SignatureInputs, Signatures) (string, error)
+	// RequiredAlgorithms is copied nonempty unique SHA256/SHA512 verification policy,
+	// not negotiated from untrusted fields.
 	RequiredAlgorithms []DigestAlgorithm
-	MaxBytes           int64
-	ExternalContext    func(context.Context, *http.Request) (*ExternalRequestContext, error)
-	MapError           func(http.ResponseWriter, *http.Request, error)
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
+	ExternalContext func(context.Context, *http.Request) (*ExternalRequestContext, error)
+	// MapError is mandatory synchronous application failure rendering; it may receive
+	// nil request and must redact safely.
+	MapError func(http.ResponseWriter, *http.Request, error)
 }
 
 // BufferedTrailerVerificationMiddleware wraps an http.Handler.
@@ -1105,17 +1166,34 @@ func NewBufferedTrailerVerificationMiddleware(config BufferedTrailerVerification
 // when Content-Digest and the message signature arrive in trailers. The body
 // is not returned to the caller until its bounded digest and signature verify.
 type BufferedTrailerVerifyingRoundTripperConfig struct {
-	Transport          http.RoundTripper
-	Verifier           *Verifier
-	SelectLabel        func(*http.Request, *http.Response, SignatureInputs, Signatures) (string, error)
+	// Transport is mandatory borrowed RoundTripper; callers own timeout, redirects,
+	// connections and concurrency.
+	Transport http.RoundTripper
+	// Verifier is mandatory borrowed constructed verifier; it verifies policy, not
+	// protected business effects.
+	Verifier *Verifier
+	// SelectLabel must explicitly select a valid actual label from parsed fields;
+	// snapshot inputs do not confer authority.
+	SelectLabel func(*http.Request, *http.Response, SignatureInputs, Signatures) (string, error)
+	// RequiredAlgorithms is copied nonempty unique SHA256/SHA512 verification policy,
+	// not negotiated from untrusted fields.
 	RequiredAlgorithms []DigestAlgorithm
-	MaxBytes           int64
-	ExternalContext    func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
+	// MaxBytes is a positive per-body content-byte bound, not an exact heap/aggregate-
+	// throughput quota.
+	MaxBytes int64
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
+	ExternalContext func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
 }
 
 // BufferedTrailerVerifyingRoundTripper verifies response trailers after EOF
 // and replaces the consumed body with a replayable in-memory copy. It closes
-// the received response body on every success and failure path.
+// the received body after successful upstream delegation, on adapter success
+// or refusal. Upstream response-plus-error returns unchanged; body closure then
+// remains with upstream/caller rather than this verification path.
+// Construct with NewBufferedTrailerVerifyingRoundTripper; zero is not usable. Shared calls require
+// safe borrowed transports/callbacks. No connection close, retry worker or
+// callback panic containment is owned by the adapter.
 type BufferedTrailerVerifyingRoundTripper struct {
 	transport          http.RoundTripper
 	verifier           *Verifier

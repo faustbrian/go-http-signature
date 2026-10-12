@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- Clarify explicit RFC dialect/profile policy, copied versus borrowed keys and
+  callbacks, body/transport ownership, streaming finality and replay outcomes.
+- Align current HTTP-SIG-DEC-006 with existing HTML-form query decoding and
+  repeated-name refusal, preserving historical decision digests and runtime.
+
 ## [1.0.1] - 2026-10-06
 
 ### Security

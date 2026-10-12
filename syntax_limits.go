@@ -12,12 +12,21 @@ var (
 // SyntaxLimits bounds untrusted Structured Fields before and after parsing.
 // Limits are per logical combined field.
 type SyntaxLimits struct {
-	MaxFieldBytes             int
-	MaxFieldLines             int
-	MaxDictionaryMembers      int
+	// MaxFieldBytes caps combined encoded bytes, including comma-space line separators;
+	// positive.
+	MaxFieldBytes int
+	// MaxFieldLines caps input field-line count before parsing; positive.
+	MaxFieldLines int
+	// MaxDictionaryMembers caps decoded dictionary members after parsing; positive.
+	MaxDictionaryMembers int
+	// MaxComponentsPerSignature caps covered items per decoded signature inner list;
+	// positive.
 	MaxComponentsPerSignature int
-	MaxParametersPerItem      int
-	MaxBinaryBytes            int
+	// MaxParametersPerItem caps each decoded item/list parameter count; positive.
+	MaxParametersPerItem int
+	// MaxBinaryBytes caps decoded byte sequences; positive and no larger than
+	// MaxFieldBytes.
+	MaxBinaryBytes int
 }
 
 // DefaultSyntaxLimits returns the restrictive bound used by convenience

@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+// gatedReadBody deliberately blocks one Read without context awareness; the
+// test owns release and joins the reader. Close is a no-op, so it does not model
+// an I/O backend that unblocks on cancellation or closure.
 type gatedReadBody struct {
 	started chan struct{}
 	release chan struct{}

@@ -24,8 +24,13 @@ var (
 // ReplayRecord identifies one verification attempt until ExpiresAt. KeyID and
 // Nonce are treated as opaque values and are never included in errors.
 type ReplayRecord struct {
-	KeyID     string
-	Nonce     string
+	// KeyID is the exact opaque resolver namespace; rotation namespaces and multi-tenant
+	// isolation are caller-defined.
+	KeyID string
+	// Nonce is exact opaque signed identity; equal key/nonce pairs share replay state.
+	Nonce string
+	// ExpiresAt is retention boundary selected from accepted validity windows, including
+	// configured skew.
 	ExpiresAt time.Time
 }
 
@@ -34,6 +39,9 @@ type ReplayRecord struct {
 // exactly one call succeeds before expiration and all others return
 // ErrReplayDetected. Unknown backend outcomes must return an error, never nil.
 type ReplayStore interface {
+	// Consume atomically reserves exact key/nonce until ExpiresAt, including
+	// accepted skew. Honor ctx and document bounded retention/durability and
+	// namespace scope; unknown outcomes fail closed, not coupled to business effects.
 	Consume(context.Context, ReplayRecord) error
 }
 
@@ -47,6 +55,8 @@ type MemoryReplayConfig struct {
 	MaxTTL time.Duration
 	// MaxKeyIDBytes and MaxNonceBytes bound caller-controlled identity storage.
 	MaxKeyIDBytes int
+	// MaxNonceBytes is a positive per-nonce retained-byte ceiling, not a global heap
+	// quota.
 	MaxNonceBytes int
 	// Now must be safe for concurrent use and must return promptly. The store
 	// never invokes it while holding replay state.
@@ -57,7 +67,10 @@ type MemoryReplayConfig struct {
 // goroutines. Consume removes at most one unrelated expired identity and uses
 // an expiration heap, so cleanup work is bounded and never scans all records.
 // Concurrent clock observations are clamped so store time never moves
-// backward. Copies refer to the same synchronized replay state.
+// backward. Copies refer to the same synchronized replay state. Construct with
+// NewMemoryReplayStore; nil/zero refuses. Retained strings are cloned, not
+// securely erased; per-record bounds/capacity are not exact heap limits. State
+// is lost on restart, with no automatic rotation or cross-process ownership.
 type MemoryReplayStore struct {
 	mu            *replayMutex
 	state         *memoryReplayState

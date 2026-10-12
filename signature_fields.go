@@ -27,16 +27,23 @@ var (
 type SFToken string
 
 // Parameter is an ordered Structured Fields parameter. Value is one of bool,
-// string, int64, float64, []byte, or SFToken. Byte values are always copied at
-// API boundaries.
+// string, int64, float64, []byte, or SFToken. Directly constructed values borrow
+// bytes; parsers, copying accessors and profile constructors clone them.
 type Parameter struct {
-	Name  string
+	// Name is an RFC 8941 lowercase key, preserved in supplied serialization order.
+	Name string
+	// Value is a supported SF scalar/token or borrowed bytes; copying accessors clone
+	// byte values.
 	Value any
 }
 
 // ComponentIdentifier identifies one ordered covered message component.
 type ComponentIdentifier struct {
-	Name       string
+	// Name is a lowercase covered field or derived @ identifier; known modes are
+	// enforced during base resolution.
+	Name string
+	// Parameters is borrowed ordered data; identity comparison sorts names while
+	// serialization retains order.
 	Parameters []Parameter
 }
 
@@ -47,8 +54,13 @@ func (component ComponentIdentifier) Parameter(name string) (any, bool) {
 
 // SignatureInput is one labeled Signature-Input dictionary member.
 type SignatureInput struct {
-	Label      string
+	// Label is a dictionary key selecting this member, not authentication by itself.
+	Label string
+	// Components is borrowed ordered coverage; full identity includes order-insensitive
+	// parameters.
 	Components []ComponentIdentifier
+	// Parameters is borrowed ordered metadata; unknown extensions parse, application
+	// policy selects registered fields.
 	Parameters []Parameter
 }
 
@@ -230,8 +242,13 @@ func (requests AcceptSignatures) String() string {
 
 // SignatureValue is one labeled Signature dictionary member.
 type SignatureValue struct {
-	Label      string
-	Value      []byte
+	// Label must match its Signature-Input dictionary label for verification.
+	Label string
+	// Value is borrowed signature bytes in direct constructed values; parser/accessors
+	// return owned copies.
+	Value []byte
+	// Parameters preserves ordered SF extensions; cryptographic verification operates on
+	// Value.
 	Parameters []Parameter
 }
 

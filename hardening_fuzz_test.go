@@ -129,6 +129,8 @@ func TestHardeningFuzzValidSeedsReachOwnedContracts(t *testing.T) {
 	}
 }
 
+// FuzzParseAcceptSignatures bounds two field fragments and checks deterministic
+// canonical/entry equivalence across accepted parses.
 func FuzzParseAcceptSignatures(f *testing.F) {
 	f.Add(`sig=("@method" "content-digest");created;expires;keyid="key";alg="hmac-sha256"`, "", false)
 	f.Add(`one=("@method");created`, `two=("@status");expires;tag="response"`, true)
@@ -165,6 +167,8 @@ func FuzzParseAcceptSignatures(f *testing.F) {
 	})
 }
 
+// FuzzParseDigestPreferences bounds two preference fragments and checks
+// deterministic canonical/entry equivalence, not application negotiation.
 func FuzzParseDigestPreferences(f *testing.F) {
 	f.Add("sha-512=3, sha-256=10, unixsum=0", "", false)
 	f.Add("sha-512=3", "sha-256=10", true)
@@ -201,6 +205,9 @@ func FuzzParseDigestPreferences(f *testing.F) {
 	})
 }
 
+// FuzzStrictStructuredFieldsMultiline bounds two field lines and compares
+// normalized multiline bases to explicit comma-space combination for all three SF
+// shapes.
 func FuzzStrictStructuredFieldsMultiline(f *testing.F) {
 	f.Add(uint8(0), "a=1", "b=?1")
 	f.Add(uint8(1), `"first"`, `("second" 2)`)
@@ -249,6 +256,9 @@ func FuzzStrictStructuredFieldsMultiline(f *testing.F) {
 	})
 }
 
+// FuzzExternalRequestTrailers bounds external context/trailer text and checks that
+// explicit trusted origin derivation is independent of untrusted Host/forwarding
+// inputs.
 func FuzzExternalRequestTrailers(f *testing.F) {
 	f.Add("https", "Example.COM:443", "/items/123?view=full", "sha-256=:YWJj:")
 	f.Add("http", "[2001:db8::1]:80", "/", "sha-512=:ZGVm:")
@@ -280,6 +290,9 @@ func FuzzExternalRequestTrailers(f *testing.F) {
 	})
 }
 
+// FuzzRawHTTPMessageFields caps raw request/response text at default syntax size,
+// drains/closes a bounded body to expose trailers, then checks parsing/base
+// robustness; no network or crypto is qualified.
 func FuzzRawHTTPMessageFields(f *testing.F) {
 	f.Add(false, []byte("POST /items?x=1 HTTP/1.1\r\nHost: example.test\r\nContent-Length: 0\r\nAccept-Signature: sig=(\"@method\");created;keyid=\"key\"\r\nWant-Content-Digest: sha-256=10, sha-512=3\r\nSignature-Input: sig=(\"@method\");created=1\r\nSignature: sig=:YWJj:\r\nContent-Digest: sha-256=:YWJj:\r\n\r\n"))
 	f.Add(false, []byte("POST / HTTP/1.1\r\nHost: example.test\r\nContent-Length: 1\r\nContent-Length: 2\r\n\r\nx"))

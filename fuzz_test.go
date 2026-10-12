@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// FuzzParseSignatureInputs varies one untrusted field under default syntax limits
+// and reparses every accepted canonical serialization.
 func FuzzParseSignatureInputs(f *testing.F) {
 	for _, seed := range []string{
 		`sig=("@method" "@authority");created=1618884473;keyid="test-key-rsa-pss"`,
@@ -27,6 +29,8 @@ func FuzzParseSignatureInputs(f *testing.F) {
 	})
 }
 
+// FuzzParseSignatures varies one default-bounded signature field and checks
+// canonical reparse, not cryptographic validity.
 func FuzzParseSignatures(f *testing.F) {
 	for _, seed := range []string{`sig=:YWJj:`, `one=:YWJj:, two=:ZGVm:`, `sig="wrong"`} {
 		f.Add(seed)
@@ -42,6 +46,8 @@ func FuzzParseSignatures(f *testing.F) {
 	})
 }
 
+// FuzzParseDigestFields varies one default-bounded digest field and checks
+// canonical reparse, not body authentication.
 func FuzzParseDigestFields(f *testing.F) {
 	for _, seed := range []string{
 		`sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:`,
@@ -61,6 +67,8 @@ func FuzzParseDigestFields(f *testing.F) {
 	})
 }
 
+// FuzzCreateSignatureBase caps aggregate method/path/query/header/field bytes at
+// default syntax size and exercises base refusal/robustness, not crypto.
 func FuzzCreateSignatureBase(f *testing.F) {
 	f.Add("GET", "/path", "x=1", "value", `sig=("@method" "@path" "@query" "x-example")`)
 	f.Add("CONNECT", "", "", "value", `sig=("@request-target")`)

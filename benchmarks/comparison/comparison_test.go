@@ -161,6 +161,11 @@ func assertCandidateDoesNotAccumulateSignatures(t *testing.T, signAndVerify func
 	}
 }
 
+// BenchmarkRequestHMACSHA256SignVerify excludes candidate/request construction
+// but measures complete field generation/verification, including local profile
+// and key policy. Each iteration resets matching fields on the same request.
+// Compare pinned equivalent coverage with repeated samples/environment records;
+// one timing or peer self-acceptance is not an interoperability/performance proof.
 func BenchmarkRequestHMACSHA256SignVerify(b *testing.B) {
 	b.Run("HTTPMessageSignature", func(b *testing.B) {
 		candidate := newLocalCandidate(b)

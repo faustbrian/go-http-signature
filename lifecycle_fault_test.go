@@ -314,6 +314,8 @@ type lifecycleResolvedSnapshot struct {
 	key ResolvedKey
 }
 
+// lifecycleAtomicResolver publishes complete immutable test policy snapshots.
+// It models rotation/removal without caching, not remote storage consistency.
 type lifecycleAtomicResolver struct {
 	current atomic.Pointer[lifecycleResolvedSnapshot]
 }
@@ -336,6 +338,9 @@ func (resolver *lifecycleAtomicResolver) Resolve(ctx context.Context, keyID stri
 	return snapshot.key, nil
 }
 
+// lifecycleRefreshResolver deliberately returns an in-flight captured snapshot
+// after a gated refresh. The test owns release/join; context bounds waiting.
+// It is a stale-result/freshness oracle, not a production refresh worker.
 type lifecycleRefreshResolver struct {
 	current      atomic.Pointer[lifecycleResolvedSnapshot]
 	first        atomic.Bool

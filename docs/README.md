@@ -30,6 +30,8 @@
 
 ## Reference and maintenance
 
+- [Source documentation audit](source-documentation.md)
+
 - [FAQ](faq.md)
 - [Contribution guide](../CONTRIBUTING.md)
 - [Release history](../CHANGELOG.md)

@@ -1,6 +1,9 @@
 // Package compatibility isolates non-RFC 9421 HTTP authentication schemes
 // behind caller-supplied protocol implementations. It does not parse, sign,
-// verify, or reinterpret any legacy wire format itself.
+// verify, or reinterpret any legacy wire format itself. Start with an explicit
+// New* adapter and trusted implementation/reporter; shared use requires safe
+// synchronous collaborators. No server/client/worker lifecycle, protocol
+// conformance, reporter-error redaction or automatic authorization is owned.
 package compatibility
 
 import (
@@ -53,13 +56,22 @@ type ErrorReporter func(context.Context, Protocol, Operation, error)
 // be read or closed through the view. Body-derived form state, TLS, and redirect
 // Response graphs are omitted because net/http clones can retain aliases.
 type SigningRoundTripperConfig struct {
-	Transport   http.RoundTripper
-	Sign        func(context.Context, *http.Request) error
+	// Transport is mandatory borrowed transport; normal request-body ownership begins on
+	// delegation.
+	Transport http.RoundTripper
+	// Sign is mandatory caller-implemented protocol signing on an isolated
+	// metadata/body-denied view.
+	Sign func(context.Context, *http.Request) error
+	// ReportError is mandatory synchronous raw diagnostic handling; redact secrets and
+	// bound concurrency/blocking.
 	ReportError ErrorReporter
 }
 
 // SigningRoundTripper applies one explicitly selected legacy or vendor signer
 // to a cloned request before delegating it. It never invokes RFC 9421 parsers.
+// Construct through an explicit New*SigningRoundTripper; zero is not usable.
+// Shared calls require safe borrowed signer/transport/reporter implementations.
+// Reporter panics/blocking are not contained and no client Close is owned.
 type SigningRoundTripper struct {
 	protocol  Protocol
 	transport http.RoundTripper
@@ -136,9 +148,15 @@ func (adapter *SigningRoundTripper) RoundTrip(request *http.Request) (*http.Resp
 // from the view. Reject receives only a sanitized error; ReportError is the
 // separate application diagnostic seam.
 type VerificationMiddlewareConfig struct {
-	Verify      func(context.Context, *http.Request) error
+	// Verify is mandatory caller protocol verification on an isolated view; only its
+	// returned error communicates success.
+	Verify func(context.Context, *http.Request) error
+	// ReportError receives original external failure synchronously; caller owns
+	// redaction, concurrency and panic behavior.
 	ReportError ErrorReporter
-	Reject      func(http.ResponseWriter, *http.Request, error)
+	// Reject is mandatory application response mapping for a sanitized ErrVerification;
+	// no status default is supplied.
+	Reject func(http.ResponseWriter, *http.Request, error)
 }
 
 // VerificationMiddleware verifies one explicitly selected non-RFC protocol

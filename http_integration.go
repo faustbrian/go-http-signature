@@ -48,17 +48,31 @@ const (
 // SigningRoundTripperConfig defines an outbound request-signing boundary.
 // Transport, options, label, and existing-field policy are all explicit.
 type SigningRoundTripperConfig struct {
-	Transport       http.RoundTripper
-	Signer          *Signer
-	Label           string
-	Existing        ExistingSignaturesPolicy
-	Options         func(context.Context, *http.Request) (SigningOptions, error)
+	// Transport is mandatory borrowed RoundTripper; callers own timeout, redirects,
+	// connections and concurrency.
+	Transport http.RoundTripper
+	// Signer is mandatory borrowed constructed signer; shared use depends on safe
+	// profile collaborators.
+	Signer *Signer
+	// Label is an explicit valid SF dictionary key, never chosen by map iteration.
+	Label string
+	// Existing is explicit reject/append policy; append preserves labels but does not
+	// verify earlier signatures.
+	Existing ExistingSignaturesPolicy
+	// Options runs synchronously on the original request; caller mutations/effects are
+	// not isolated by this adapter.
+	Options func(context.Context, *http.Request) (SigningOptions, error)
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
 	ExternalContext func(context.Context, *http.Request) (*ExternalRequestContext, error)
 }
 
 // SigningRoundTripper signs a cloned request immediately before delegation. It
 // does not read or replace Body; the wrapped transport retains normal body
 // consumption and closure ownership.
+// Construct with NewSigningRoundTripper; zero is not usable. Shared calls require
+// safe borrowed transports/callbacks. No connection close, retry worker or
+// callback panic containment is owned by the adapter.
 type SigningRoundTripper struct {
 	transport       http.RoundTripper
 	signer          *Signer
@@ -85,7 +99,10 @@ func NewSigningRoundTripper(config SigningRoundTripperConfig) (*SigningRoundTrip
 	}, nil
 }
 
-// RoundTrip implements http.RoundTripper without mutating request headers.
+// RoundTrip signs a cloned header view, then transfers normal body ownership
+// to the borrowed transport. Original-request callbacks remain caller code and
+// can mutate if misused; pre-delegation failures close the original body. No
+// redirect, proxy, retry or forced-timeout policy is installed.
 func (transport *SigningRoundTripper) RoundTrip(request *http.Request) (*http.Response, error) {
 	if transport == nil || request == nil {
 		return nil, ErrInvalidHTTPIntegration
@@ -158,10 +175,18 @@ func signingRoundTripError(request *http.Request, err error) (*http.Response, er
 // RequestVerificationMiddlewareConfig defines inbound selection, trusted
 // external-origin reconstruction, and application-specific failure mapping.
 type RequestVerificationMiddlewareConfig struct {
-	Verifier        *Verifier
-	SelectLabel     func(*http.Request, SignatureInputs, Signatures) (string, error)
+	// Verifier is mandatory borrowed constructed verifier; it verifies policy, not
+	// protected business effects.
+	Verifier *Verifier
+	// SelectLabel must explicitly select a valid actual label from parsed fields;
+	// snapshot inputs do not confer authority.
+	SelectLabel func(*http.Request, SignatureInputs, Signatures) (string, error)
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
 	ExternalContext func(context.Context, *http.Request) (*ExternalRequestContext, error)
-	MapError        func(http.ResponseWriter, *http.Request, error)
+	// MapError is mandatory synchronous application failure rendering; it may receive
+	// nil request and must redact safely.
+	MapError func(http.ResponseWriter, *http.Request, error)
 }
 
 // RequestVerificationMiddleware wraps an http.Handler.
@@ -238,15 +263,32 @@ func VerifiedSignatureFromContext(ctx context.Context) (VerifiedSignature, bool)
 // Handlers requiring streaming, flushing, hijacking, or full-duplex operation
 // need a trailer-aware adapter instead.
 type ResponseSigningMiddlewareConfig struct {
-	Signer                  *Signer
-	Label                   string
-	Existing                ExistingSignaturesPolicy
-	MaxBufferedBytes        int64
+	// Signer is mandatory borrowed constructed signer; shared use depends on safe
+	// profile collaborators.
+	Signer *Signer
+	// Label is an explicit valid SF dictionary key, never chosen by map iteration.
+	Label string
+	// Existing is explicit reject/append policy; append preserves labels but does not
+	// verify earlier signatures.
+	Existing ExistingSignaturesPolicy
+	// MaxBufferedBytes must be positive and bounds emitted content buffered before
+	// signing, not header/global memory.
+	MaxBufferedBytes int64
+	// ContentDigestAlgorithms optionally computes copied SHA256/SHA512 policy; the
+	// signing profile must cover Content-Digest.
 	ContentDigestAlgorithms []DigestAlgorithm
-	Options                 func(context.Context, *http.Request, *http.Response) (SigningOptions, error)
-	ExternalContext         func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
-	MapError                func(http.ResponseWriter, *http.Request, error)
-	ReportError             func(*http.Request, error)
+	// Options is a mandatory synchronous borrowed per-message callback; support
+	// concurrency, bound work and avoid body/message mutation.
+	Options func(context.Context, *http.Request, *http.Response) (SigningOptions, error)
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
+	ExternalContext func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
+	// MapError is mandatory synchronous application failure rendering; it may receive
+	// nil request and must redact safely.
+	MapError func(http.ResponseWriter, *http.Request, error)
+	// ReportError is mandatory synchronous diagnostic reporting; bound work and redact,
+	// including after response commitment.
+	ReportError func(*http.Request, error)
 }
 
 // ResponseSigningMiddleware wraps an http.Handler.
@@ -586,17 +628,32 @@ func rejectBufferedContentLength(header http.Header) error {
 // external request context. The wrapped transport retains request-body
 // ownership; this adapter closes a response body when verification fails.
 type VerifyingRoundTripperConfig struct {
-	Transport               http.RoundTripper
-	Verifier                *Verifier
-	SelectLabel             func(*http.Request, *http.Response, SignatureInputs, Signatures) (string, error)
+	// Transport is mandatory borrowed RoundTripper; callers own timeout, redirects,
+	// connections and concurrency.
+	Transport http.RoundTripper
+	// Verifier is mandatory borrowed constructed verifier; it verifies policy, not
+	// protected business effects.
+	Verifier *Verifier
+	// SelectLabel must explicitly select a valid actual label from parsed fields;
+	// snapshot inputs do not confer authority.
+	SelectLabel func(*http.Request, *http.Response, SignatureInputs, Signatures) (string, error)
+	// ContentDigestAlgorithms is optional copied policy; required before accepting
+	// coverage of a response Content-Digest.
 	ContentDigestAlgorithms []DigestAlgorithm
-	MaxBufferedBytes        int64
-	ExternalContext         func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
+	// MaxBufferedBytes is positive with ContentDigestAlgorithms, zero when no digest
+	// buffering policy is configured.
+	MaxBufferedBytes int64
+	// ExternalContext is optional borrowed trusted origin/target reconstruction; never
+	// trust arbitrary forwarding values.
+	ExternalContext func(context.Context, *http.Request, *http.Response) (*ExternalRequestContext, error)
 }
 
 // VerifyingRoundTripper verifies response signatures. A selected signature
 // that covers a response Content-Digest is accepted only when an explicit
 // bounded digest policy verifies and replaces the consumed body.
+// Construct with NewVerifyingRoundTripper; zero is not usable. Shared calls require
+// safe borrowed transports/callbacks. No connection close, retry worker or
+// callback panic containment is owned by the adapter.
 type VerifyingRoundTripper struct {
 	transport               http.RoundTripper
 	verifier                *Verifier

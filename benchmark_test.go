@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+// BenchmarkCreateSignatureBase measures one POST base with
+// method/authority/path/content-type/content-digest coverage; request construction
+// and parsing are excluded.
 func BenchmarkCreateSignatureBase(b *testing.B) {
 	request, err := http.NewRequest(http.MethodPost, "https://example.com/pay?tenant=one", nil)
 	if err != nil {
@@ -23,6 +26,9 @@ func BenchmarkCreateSignatureBase(b *testing.B) {
 	}
 }
 
+// BenchmarkHMACSHA256SignVerify measures primitive signing/verification of one
+// fixed short base; copied HMAC key construction is excluded, without
+// resolver/replay policy.
 func BenchmarkHMACSHA256SignVerify(b *testing.B) {
 	key, _ := NewHMACKey([]byte("0123456789abcdef0123456789abcdef"))
 	base := []byte(`"@method": POST
@@ -40,6 +46,8 @@ func BenchmarkHMACSHA256SignVerify(b *testing.B) {
 	}
 }
 
+// BenchmarkSHA256ContentDigest1MiB measures SHA-256 dictionary construction over 1
+// MiB of zero bytes; content allocation is excluded, without I/O.
 func BenchmarkSHA256ContentDigest1MiB(b *testing.B) {
 	content := make([]byte, 1<<20)
 	b.SetBytes(int64(len(content)))

@@ -432,7 +432,7 @@ Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
     "Apply the explicit package behavior recorded by this decision."
   ],
   "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
-  "selected_behavior": "The @query-param component uses Go form parsing and preserves decoded duplicate values in received order.",
+  "selected_behavior": "The @query-param component uses the maintained HTML-form decoder: plus becomes space, valid percent escapes decode, malformed escapes remain literal and invalid UTF-8 is replaced. The requested name is matched in canonical form encoding; exactly one matching decoded occurrence is required, with empty values allowed and missing or repeated matches rejected.",
   "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
   "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
   "resource_consequences": "Processing and retained state remain within documented finite bounds.",
@@ -463,27 +463,26 @@ Authoritative source URL: https://www.rfc-editor.org/rfc/rfc9421.txt
 **Authoritative reference:** [RFC 9421 Section 2.2.8](https://www.rfc-editor.org/rfc/rfc9421.html#section-2.2.8).
 
 - **Status, owner, and classification:** `resolved`; maintainers; normative
-  query-component interpretation tied to Go's HTTP form model.
-- **Source and issue:** RFC 9421 defines `@query-param` through URL query
-  parsing but leaves language APIs to perform decoding. Percent errors,
-  plus-as-space, invalid UTF-8, empty values, and duplicates can diverge.
-- **Interpretations and peer behavior:** Use raw substring matching, strict URI
-  decoding, HTML form decoding, first-value selection, or all values. Peers
-  differ around invalid UTF-8 and plus signs.
-- **Selected behavior:** `@query-param` uses Go `net/url` HTML form parsing,
-  preserves duplicate value order, permits an explicit empty value, applies
-  UTF-8 replacement exactly as the standard library does, and rejects malformed
-  escapes or missing requested names.
-- **Consequences:** The security consequence is one documented decoder rather
-  than parser differentials. The resource consequence is bounded query parsing.
-  The compatibility consequence follows Go form semantics. The wire
-  consequence is one signature-base line per decoded value in received order.
-- **Evidence, public surface, upstream, and reconsideration:**
-  `TestQueryParameterUsesHTMLFormParsing`,
-  `TestCreateSignatureBaseQueryParamUsesUTF8ReplacementFromHTMLFormParsing`, and
-  `TestSignatureBaseAllowsEmptyRFCQueryParameterValue` cover `@query-param`.
-  No upstream resolution selects a different Go decoder. Reconsider if RFC
-  errata or Go's documented query semantics change.
+  query-component interpretation under the maintained HTML-form decoder.
+- **Source and issue:** RFC 9421 Section 2.2.8 identifies the HTML-form query
+  model. Percent errors, plus-as-space, invalid UTF-8, empty values and repeated
+  names need the same interpretation when reconstructing a base.
+- **Interpretations:** Raw substring matching, strict URI decoding, HTML-form
+  decoding and first/all-value selection have different observable boundaries.
+- **Selected behavior:** `@query-param` uses the maintained decoder: plus is
+  space, valid escapes decode, malformed escapes stay literal and invalid UTF-8
+  is replaced. The requested name is compared in canonical form encoding.
+  Exactly one matching decoded occurrence is required; an empty value is valid,
+  while missing or repeated matches fail. This is not Go `url.ParseQuery`.
+- **Consequences:** One deterministic decoder avoids first/last-value
+  ambiguity. Query work is bounded by the signature-base budget. One accepted
+  component emits one base line; changing decoding/refusal needs specification
+  and compatibility review, not a standard-library substitution.
+- **Evidence and reconsideration:** `TestQueryParameterUsesHTMLFormParsing`,
+  `TestCreateSignatureBaseQueryParamUsesUTF8ReplacementFromHTMLFormParsing`,
+  `TestQueryAndValidationBoundaries` and
+  `TestSignatureBaseAllowsEmptyRFCQueryParameterValue` protect the boundary.
+  Reconsider when a pinned authority or supported transport changes it.
 
 ## HTTP-SIG-DEC-007: Structured, binary, trailer, and related-request modes
 

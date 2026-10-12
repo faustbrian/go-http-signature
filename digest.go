@@ -1,4 +1,3 @@
-// Package httpsignature implements HTTP Message Signatures and digest fields.
 package httpsignature
 
 import (
@@ -36,8 +35,14 @@ var (
 
 // Digest is one algorithm and checksum member of an RFC 9530 integrity field.
 type Digest struct {
-	Algorithm  DigestAlgorithm
-	Value      []byte
+	// Algorithm is a parsed dictionary key; unknown unselected names remain available to
+	// application policy.
+	Algorithm DigestAlgorithm
+	// Value is borrowed checksum bytes in constructed values; parsing/Entries returns
+	// owned copies.
+	Value []byte
+	// Parameters preserves ordered SF extensions, not an automatic algorithm negotiation
+	// policy.
 	Parameters []Parameter
 }
 

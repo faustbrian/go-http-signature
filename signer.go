@@ -31,17 +31,31 @@ var (
 // SigningKey binds private or shared signing material to an identifier,
 // algorithm, validity interval, and revocation decision.
 type SigningKey struct {
-	KeyID     string
+	// KeyID is nonempty public key identity emitted in protected metadata, not
+	// application authorization.
+	KeyID string
+	// Algorithm must match the profile allowlist and the exact key type.
 	Algorithm Algorithm
-	Key       any
+	// Key is borrowed private/shared material; keep it immutable during use and obey
+	// algorithm size rules.
+	Key any
+	// NotBefore is required inclusive activation at sampled signing time.
 	NotBefore time.Time
-	NotAfter  time.Time
-	Revoked   bool
+	// NotAfter is required exclusive expiry after NotBefore; required signature expiry
+	// cannot extend beyond it.
+	NotAfter time.Time
+	// Revoked refuses use even when the time window and algorithm match.
+	Revoked bool
 }
 
 // SigningKeyProvider selects current signing material under a bounded context.
-// Implementations own key storage and rotation; the core performs no IO.
+// Implementations own key storage/rotation and concurrent use; honor context,
+// bound work and keep returned borrowed keys immutable during signing. The core
+// makes one synchronous call without detaching a worker or containing panics.
 type SigningKeyProvider interface {
+	// SigningKey selects trusted current algorithm-bound material with explicit
+	// activation/expiry/revocation. Late success is rejected; raw provider errors
+	// are mapped to ErrSigningProvider rather than retained.
 	SigningKey(context.Context) (SigningKey, error)
 }
 
@@ -49,27 +63,50 @@ type SigningKeyProvider interface {
 // are always included as required by this signing API. Other registered
 // parameters must be explicitly required or forbidden.
 type SigningProfileConfig struct {
-	AllowedAlgorithms  []Algorithm
-	CoveredComponents  []ComponentIdentifier
+	// AllowedAlgorithms is a nonempty unique supported allowlist copied at construction.
+	AllowedAlgorithms []Algorithm
+	// CoveredComponents is copied, including parameter byte values, in exact signing
+	// order.
+	CoveredComponents []ComponentIdentifier
+	// AllowEmptyCoverage must explicitly permit no covered components; it does not
+	// authorize any message effect.
 	AllowEmptyCoverage bool
-	Expires            ParameterPolicy
+	// Expires must explicitly require or forbid expires; optional is not a signing
+	// policy.
+	Expires ParameterPolicy
+	// AlgorithmParameter must require or forbid emitting alg; resolved provider
+	// algorithm always binds the primitive.
 	AlgorithmParameter ParameterPolicy
-	Nonce              ParameterPolicy
-	Tag                ParameterPolicy
-	TagValue           string
-	Lifetime           time.Duration
-	ResolveTimeout     time.Duration
-	Now                func() time.Time
-	Provider           SigningKeyProvider
+	// Nonce must require or forbid a caller-supplied nonce; no nonce generator is
+	// provided.
+	Nonce ParameterPolicy
+	// Tag must require or forbid the configured exact TagValue.
+	Tag ParameterPolicy
+	// TagValue is required valid SF text with required Tag, empty when forbidden.
+	TagValue string
+	// Lifetime is whole positive seconds with required Expires, zero when forbidden.
+	Lifetime time.Duration
+	// ResolveTimeout is positive cooperative key-provider deadline; late success is
+	// rejected.
+	ResolveTimeout time.Duration
+	// Now is mandatory borrowed concurrent-safe prompt clock, not context-preempted.
+	Now func() time.Time
+	// Provider is mandatory borrowed rotation/key owner; honor context and support
+	// concurrent calls.
+	Provider SigningKeyProvider
 	// Random is retained for source compatibility.
 	//
 	// Deprecated: Random is ignored. Randomized algorithms use Go-managed
 	// cryptographically secure randomness.
-	Random                        io.Reader
+	Random io.Reader
+	// RequireExternalRequestContext refuses signing without an explicit trusted external
+	// request context.
 	RequireExternalRequestContext bool
 }
 
-// SigningProfile is an immutable application signing policy.
+// SigningProfile copies immutable policy while borrowing its clock/provider.
+// Construct with NewSigningProfile; shared use requires those collaborators to
+// be safe and prompt. It owns no key erasure, rotation worker or close lifecycle.
 type SigningProfile struct {
 	algorithms             map[Algorithm]struct{}
 	components             []ComponentIdentifier
@@ -86,7 +123,11 @@ type SigningProfile struct {
 	requireExternalRequest bool
 }
 
-// NewSigningProfile validates and copies an explicit signing policy.
+// NewSigningProfile validates/copies unique algorithms, ordered coverage and
+// parameter bytes, returning nil/ErrInvalidSigningProfile on refusal. Clock and
+// provider remain borrowed; typed nil and callback panics are not contained.
+// Creation/keyid are emitted; each other registered parameter is explicitly
+// required or forbidden, not implicitly optional (HTTP-SIG-DEC-008).
 func NewSigningProfile(config SigningProfileConfig) (*SigningProfile, error) {
 	if len(config.AllowedAlgorithms) == 0 || config.Now == nil || config.Provider == nil || config.ResolveTimeout <= 0 ||
 		!signingParameterPolicy(config.Expires) || !signingParameterPolicy(config.AlgorithmParameter) ||
@@ -149,6 +190,8 @@ func NewSigningProfile(config SigningProfileConfig) (*SigningProfile, error) {
 
 // SigningOptions supplies per-message values that cannot be safely defaulted.
 type SigningOptions struct {
+	// Nonce is supplied by the caller only when required; freshness/entropy is
+	// application-owned.
 	Nonce string
 }
 
@@ -179,6 +222,9 @@ func (signed SignedFields) SignatureField() string {
 
 // CombineSignedFields combines validated label pairs in caller order. It
 // rejects duplicate labels and never uses map iteration to choose wire order.
+// Returned containers deep-copy values; zero/incomplete input refuses with
+// zero outputs. This combines fields, not verification, negotiation or signing
+// of previously supplied pairs; direct count/output bounds are caller-owned.
 func CombineSignedFields(fields ...SignedFields) (SignatureInputs, Signatures, error) {
 	if len(fields) == 0 {
 		return SignatureInputs{}, Signatures{}, ErrInvalidSignedFields
@@ -209,13 +255,19 @@ type Signer struct {
 	profile *SigningProfile
 }
 
-// NewSigner creates a signer with no hidden defaults or network access.
+// NewSigner retains an explicit profile and starts no work. Nil profile is
+// accepted at construction but Sign then returns ErrSigningPolicy. Shared use
+// requires safe profile collaborators and immutable borrowed messages.
 func NewSigner(profile *SigningProfile) *Signer {
 	return &Signer{profile: profile}
 }
 
 // Sign creates one matching signature field pair without mutating the HTTP
-// message or consuming its body.
+// message or consuming its body. Nil context returns context.Canceled; nil/zero
+// signer refuses. Key window is inclusive/exclusive at sampled processing time;
+// required expires cannot exceed key expiry. Nonce is caller-supplied, not
+// generated. Provider deadline/diagnostic and crypto errors are classified;
+// failure returns zero SignedFields but collaborator effects are not rolled back.
 func (signer *Signer) Sign(ctx context.Context, message MessageContext, label string, options SigningOptions) (SignedFields, error) {
 	if ctx == nil {
 		return SignedFields{}, context.Canceled

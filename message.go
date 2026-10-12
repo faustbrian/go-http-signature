@@ -49,8 +49,13 @@ const (
 // application that terminates HTTP behind an intermediary. Values are never
 // inferred from Forwarded or X-Forwarded-* fields.
 type ExternalRequestContext struct {
-	Scheme        string
-	Authority     string
+	// Scheme is trusted external http/https context, not arbitrary forwarding data.
+	Scheme string
+	// Authority is trusted external authority, normalized consistently with any
+	// absolute/CONNECT target.
+	Authority string
+	// RequestTarget is the complete trusted target; all three fields must be nonempty
+	// when supplied.
 	RequestTarget string
 }
 
@@ -73,11 +78,23 @@ const (
 // Exactly one of Request and Response must be set. RelatedRequest is required
 // when a response signature covers a component carrying the req parameter.
 type MessageContext struct {
-	Request           *http.Request
-	Response          *http.Response
-	RelatedRequest    *http.Request
-	ExternalRequest   *ExternalRequestContext
-	StructuredFields  map[string]StructuredFieldType
+	// Request is the borrowed target request; exactly one of Request/Response must be
+	// non-nil.
+	Request *http.Request
+	// Response is the borrowed target response; managed fields require correct
+	// ResponseTransport selection.
+	Response *http.Response
+	// RelatedRequest is explicit borrowed actual-request context for response components
+	// carrying req.
+	RelatedRequest *http.Request
+	// ExternalRequest is optional borrowed complete trusted proxy reconstruction, never
+	// auto-derived from forwarding fields.
+	ExternalRequest *ExternalRequestContext
+	// StructuredFields is borrowed lowercase field-name/type policy required for sf
+	// canonicalization.
+	StructuredFields map[string]StructuredFieldType
+	// ResponseTransport selects received versus Response.Write wire identity;
+	// unspecified refuses ambiguous managed fields.
 	ResponseTransport ResponseTransportMode
 	// MaxSignatureBaseBytes bounds the complete canonical base. Zero selects
 	// DefaultMaxSignatureBaseBytes; negative values are invalid.
@@ -85,7 +102,12 @@ type MessageContext struct {
 }
 
 // CreateSignatureBase resolves the ordered covered components and produces the
-// exact RFC 9421 signature base. It returns no partial base on error.
+// exact RFC 9421 signature base. It returns no partial base on error. Borrowed
+// message/parameter/maps must stay immutable. No body is read; trailers must
+// already be available, and owned output may expose covered application data.
+// Limits bound canonicalization, not all caller-owned objects. Managed response
+// fields require explicit identity when ambiguous; trusted related/proxy context
+// is caller policy (HTTP-SIG-DEC-005/007/020).
 func CreateSignatureBase(context MessageContext, input SignatureInput) (string, error) {
 	if (context.Request == nil) == (context.Response == nil) {
 		return "", fmt.Errorf("%w: exactly one target message is required", ErrSignatureBase)
@@ -1289,6 +1311,9 @@ func serializeSignatureParameters(input SignatureInput) (string, error) {
 	return marshalRFC8941(httpsfv.InnerList{Items: items, Params: parameters})
 }
 
+// Preserve the maintained decoder instead of substituting url.ParseQuery:
+// malformed percent stays literal, invalid UTF-8 is replaced, and exactly one
+// matching decoded name is required (HTTP-SIG-DEC-006, TestQueryAndValidationBoundaries).
 func queryParameter(rawQuery, encodedName string, maxBytes int) (string, error) {
 	if rawQuery == "" {
 		return "", errors.New("named query parameter is absent")

@@ -29,8 +29,11 @@ var (
 type ParameterPolicy uint8
 
 const (
+	// ParameterForbidden rejects presence of that registered parameter.
 	ParameterForbidden ParameterPolicy = iota + 1
+	// ParameterOptional permits absence/presence with associated profile constraints.
 	ParameterOptional
+	// ParameterRequired requires presence; zero ParameterPolicy is always invalid.
 	ParameterRequired
 )
 
@@ -38,17 +41,31 @@ const (
 // explicit validity and cache-freshness interval. Resolver implementations own
 // storage, rotation, revocation lookup, caching, and remote IO.
 type ResolvedKey struct {
-	Algorithm  Algorithm
-	Key        any
-	NotBefore  time.Time
-	NotAfter   time.Time
+	// Algorithm is trusted resolver binding; it must be allowed and match any protected
+	// alg.
+	Algorithm Algorithm
+	// Key is borrowed verification material of the exact public/shared type; private
+	// asymmetric keys are refused.
+	Key any
+	// NotBefore is required inclusive activation; verification and signed creation apply
+	// configured skew.
+	NotBefore time.Time
+	// NotAfter is required exclusive key expiry after NotBefore, extended only by
+	// configured skew.
+	NotAfter time.Time
+	// FreshUntil is required exclusive resolver-cache freshness at processing time,
+	// without skew extension.
 	FreshUntil time.Time
-	Revoked    bool
+	// Revoked refuses use regardless of cached algorithm/time data.
+	Revoked bool
 }
 
 // KeyResolver resolves an opaque key identifier under the supplied bounded
 // context. Implementations must return only context-aware, bounded operations.
 type KeyResolver interface {
+	// Resolve supplies trusted algorithm/key/lifecycle/freshness for an opaque
+	// ID, not policy inferred from untrusted alg. Honor ctx and support concurrent
+	// use; late success refuses and backend diagnostic graphs are stripped.
 	Resolve(context.Context, string) (ResolvedKey, error)
 }
 
@@ -56,26 +73,59 @@ type KeyResolver interface {
 // to a profile. Key identifiers are mandatory in this profile implementation;
 // static keys can be exposed by a resolver that recognizes a fixed identifier.
 type VerificationProfileConfig struct {
-	AllowedAlgorithms             []Algorithm
-	RequiredComponents            []ComponentIdentifier
-	AllowEmptyCoverage            bool
-	Created                       ParameterPolicy
-	Expires                       ParameterPolicy
-	AlgorithmParameter            ParameterPolicy
-	Nonce                         ParameterPolicy
-	Tag                           ParameterPolicy
-	AllowedTags                   []string
-	MaxAge                        time.Duration
-	ClockSkew                     time.Duration
-	ResolveTimeout                time.Duration
-	ReplayTimeout                 time.Duration
-	Now                           func() time.Time
-	Resolver                      KeyResolver
-	Replay                        ReplayStore
+	// AllowedAlgorithms is nonempty unique supported policy copied at construction;
+	// inbound alg cannot widen it.
+	AllowedAlgorithms []Algorithm
+	// RequiredComponents is copied coverage policy with order-insensitive parameter
+	// identity; extra covered components may remain.
+	RequiredComponents []ComponentIdentifier
+	// AllowEmptyCoverage must explicitly permit empty coverage and does not imply
+	// authorization.
+	AllowEmptyCoverage bool
+	// Created explicitly forbids, permits or requires signed creation; non-forbidden
+	// needs positive MaxAge.
+	Created ParameterPolicy
+	// Expires explicitly forbids, permits or requires exclusive signature expiration.
+	Expires ParameterPolicy
+	// AlgorithmParameter controls protected alg presence, not whether resolver/primitive
+	// binding is enforced.
+	AlgorithmParameter ParameterPolicy
+	// Nonce controls nonce presence; non-forbidden requires Replay and positive
+	// ReplayTimeout.
+	Nonce ParameterPolicy
+	// Tag controls tag presence; non-forbidden requires a nonempty allowed-tag set.
+	Tag ParameterPolicy
+	// AllowedTags is a unique valid SF-text allowlist copied at construction; empty only
+	// when Tag is forbidden.
+	AllowedTags []string
+	// MaxAge is zero with forbidden Created, positive otherwise; MaxAge+ClockSkew must
+	// not overflow.
+	MaxAge time.Duration
+	// ClockSkew is nonnegative payload/key tolerance; it does not extend FreshUntil.
+	ClockSkew time.Duration
+	// ResolveTimeout is positive cooperative resolver deadline; late successful results
+	// are rejected.
+	ResolveTimeout time.Duration
+	// ReplayTimeout is positive when nonce is not forbidden, otherwise zero; timeout may
+	// follow a committed reservation.
+	ReplayTimeout time.Duration
+	// Now is mandatory borrowed prompt concurrent-safe clock; input and key policy
+	// sample it separately.
+	Now func() time.Time
+	// Resolver is mandatory borrowed trusted key/lifecycle owner; honor context and
+	// support concurrent use.
+	Resolver KeyResolver
+	// Replay is mandatory when nonce is not forbidden; atomic backend
+	// lifetime/consistency remain caller-owned.
+	Replay ReplayStore
+	// RequireExternalRequestContext refuses verification without explicit trusted
+	// external request context.
 	RequireExternalRequestContext bool
 }
 
-// VerificationProfile is an immutable application verification policy.
+// VerificationProfile copies policy and borrows clock/resolver/replay owners.
+// Construct with NewVerificationProfile; shared use requires safe prompt
+// collaborators and immutable messages. No cache, worker or Close is owned.
 type VerificationProfile struct {
 	algorithms             map[Algorithm]struct{}
 	requiredComponents     []ComponentIdentifier
@@ -96,7 +146,10 @@ type VerificationProfile struct {
 	requireExternalRequest bool
 }
 
-// NewVerificationProfile validates and copies an explicit application policy.
+// NewVerificationProfile validates/copies algorithms, coverage parameter bytes
+// and tags, returning nil/ErrInvalidVerificationProfile on refusal. Permitted
+// nonce requires replay ownership/deadline; callbacks stay borrowed. No global
+// input-count cap or typed-nil/panic detection is added (HTTP-SIG-DEC-008/011/012).
 func NewVerificationProfile(config VerificationProfileConfig) (*VerificationProfile, error) {
 	if len(config.AllowedAlgorithms) == 0 || config.Now == nil || config.Resolver == nil ||
 		config.ResolveTimeout <= 0 || config.ClockSkew < 0 ||
@@ -183,24 +236,38 @@ func NewVerificationProfile(config VerificationProfileConfig) (*VerificationProf
 type VerificationFailure string
 
 const (
-	VerificationSelection     VerificationFailure = "selection"
-	VerificationPolicy        VerificationFailure = "policy"
-	VerificationTime          VerificationFailure = "time"
+	// VerificationSelection identifies invalid context/profile or mismatched label sets.
+	VerificationSelection VerificationFailure = "selection"
+	// VerificationPolicy identifies parameter/coverage/trusted-context refusal.
+	VerificationPolicy VerificationFailure = "policy"
+	// VerificationTime identifies creation/expiration refusal.
+	VerificationTime VerificationFailure = "time"
+	// VerificationKeyResolution identifies bounded resolver failure before key use.
 	VerificationKeyResolution VerificationFailure = "key-resolution"
-	VerificationKey           VerificationFailure = "key"
-	VerificationAlgorithm     VerificationFailure = "algorithm"
-	VerificationBase          VerificationFailure = "signature-base"
+	// VerificationKey identifies unusable material/lifecycle/freshness.
+	VerificationKey VerificationFailure = "key"
+	// VerificationAlgorithm identifies disallowed/mismatched algorithm binding.
+	VerificationAlgorithm VerificationFailure = "algorithm"
+	// VerificationBase identifies canonical base refusal.
+	VerificationBase VerificationFailure = "signature-base"
+	// VerificationCryptographic identifies failed primitive verification.
 	VerificationCryptographic VerificationFailure = "cryptographic"
-	VerificationReplay        VerificationFailure = "replay"
+	// VerificationReplay identifies replay refusal, deadline or unknown outcome.
+	VerificationReplay VerificationFailure = "replay"
 )
 
-// VerificationError is safe for classification and logging. Error omits key
-// identifiers, nonces, signature bases, signature bytes, and message content.
+// VerificationError separates a core-created fixed category from its cause.
+// Core Error omits key/nonce/base/signature/message data; public Failure can
+// contain arbitrary caller-created strings and is not a redaction boundary.
+// Methods require non-nil receiver; Unwrap exposes classification causes.
 type VerificationError struct {
+	// Failure is a fixed category for core-created errors; caller-constructed strings
+	// are not sanitized.
 	Failure VerificationFailure
 	cause   error
 }
 
+// Error renders the category only, including arbitrary caller-set Failure text.
 func (err *VerificationError) Error() string {
 	return "http signature verification failed: " + string(err.Failure)
 }
@@ -215,26 +282,42 @@ func (err *VerificationError) Unwrap() error {
 // A successful result proves cryptographic validity and profile conformance;
 // it does not grant authentication or authorization.
 type VerifiedSignature struct {
-	Label     string
-	KeyID     string
+	// Label is the explicitly selected actual signature label.
+	Label string
+	// KeyID is resolved public identity, not principal authentication or authorization.
+	KeyID string
+	// Algorithm is trusted resolved primitive binding.
 	Algorithm Algorithm
-	Created   time.Time
-	Expires   time.Time
+	// Created is signed creation time, zero if absent under policy.
+	Created time.Time
+	// Expires is signed expiration, zero if absent; replay retention may use MaxAge and
+	// skew instead.
+	Expires time.Time
 }
 
-// Verifier applies one immutable application profile.
+// Verifier borrows one immutable profile. Shared use requires safe prompt
+// collaborators; resolver/replay shutdown and business transactions remain
+// caller-owned. No background worker or implicit authorization is added.
 type Verifier struct {
 	profile *VerificationProfile
 }
 
-// NewVerifier creates a verifier with no hidden defaults or network access.
+// NewVerifier retains an explicit profile without starting work. Nil profile
+// is accepted here but Verify refuses; nil/zero Verifier also refuses. No
+// default key, clock, replay or authorization policy is installed.
 func NewVerifier(profile *VerificationProfile) *Verifier {
 	return &Verifier{profile: profile}
 }
 
 // Verify selects one explicit label, enforces application policy, resolves an
 // algorithm-bound key, verifies the reconstructed signature base, and only
-// then atomically consumes the nonce.
+// then atomically consumes the nonce. Borrowed message/storage must remain
+// immutable; failure returns zero VerifiedSignature. Successful resolution is
+// rechecked for deadline, skew-aware activation and strict FreshUntil. Replay
+// deadline may follow a committed reservation; replay is not rolled back for
+// deadline or downstream failure. Signature time is sampled before base/key
+// resolution, while key policy samples separately afterward; there is no final
+// signature-time or authorization recheck. Callback blocking/panics remain owner-bound.
 func (verifier *Verifier) Verify(
 	ctx context.Context,
 	message MessageContext,
