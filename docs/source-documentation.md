@@ -58,3 +58,12 @@ scripts and harness notes; none is executed by this pass.
 No unsupported conformance, security review refresh, consumer migration or
 release claim is inferred. The coordinator owns shared CI enforcement and
 remote-main qualification. Prose does not require a release or repin.
+
+## Objective Enforcement
+
+The checksum-pinned public Tools v2.4.0 verifier now supplies
+`make source-docs-check` as a prerequisite of the existing local and CI Make
+routes. Ordinary shared CI selects strict source-documentation checking and
+requires its result. Native prerequisites, operation budgets, security and
+release controls are retained. Hosted exact-head evidence is recorded by the
+coordination ledger; configuration alone does not establish green delivery.
