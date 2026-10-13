@@ -1,5 +1,7 @@
 # Normative conformance matrix
 
+[Documentation index](README.md)
+
 The [specification decision register](specification-decisions.md) records the
 ambiguities, alternatives, selected behavior, consequences, and reconsideration
 conditions behind this matrix.

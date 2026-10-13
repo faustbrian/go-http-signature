@@ -1,5 +1,7 @@
 # Security threat model: go-http-signature
 
+[Documentation index](README.md)
+
 **Model version:** 1.0 (2026-09-22)
 
 **Source baseline:** `c62671a7a92e281d2186a10855b129d9b1145613` on `main`

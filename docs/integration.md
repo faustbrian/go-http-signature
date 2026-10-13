@@ -1,5 +1,7 @@
 # Integration and middleware ordering
 
+[Documentation index](README.md)
+
 ## Client requests
 
 For buffered body signatures, compose transports from outermost to innermost:

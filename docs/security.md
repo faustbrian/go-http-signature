@@ -1,5 +1,7 @@
 # Security model and profile guidance
 
+[Documentation index](README.md)
+
 ## Profile decisions
 
 Every deployment profile must define:

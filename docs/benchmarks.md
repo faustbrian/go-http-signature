@@ -1,5 +1,7 @@
 # Benchmarks
 
+[Documentation index](README.md)
+
 Run `make check-full` on an otherwise idle machine. The command reports the Go
 toolchain, operation latency, throughput where byte size is known, and
 allocations. Record CPU model, operating system, Go version, corpus, command,

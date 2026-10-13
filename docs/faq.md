@@ -1,5 +1,7 @@
 # FAQ and migration
 
+[Documentation index](README.md)
+
 ## Is verification authentication or authorization?
 
 No. It proves that an allowed key produced a signature over the selected

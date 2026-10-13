@@ -1,5 +1,7 @@
 # HTTP Message Signature Specification Decisions
 
+[Documentation index](README.md)
+
 This register records observable choices made while implementing RFC 8941,
 RFC 9421, and RFC 9530. It complements the exhaustive
 [normative conformance matrix](conformance.md) and the pinned

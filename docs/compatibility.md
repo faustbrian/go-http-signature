@@ -1,5 +1,7 @@
 # Compatibility Boundaries
 
+[Documentation index](README.md)
+
 The RFC 9421 implementation and legacy or vendor signing protocols are separate
 trust boundaries. The core parser never auto-detects Cavage drafts, AWS
 Signature V4, OAuth 1.0, or vendor-specific formats. The `compatibility`

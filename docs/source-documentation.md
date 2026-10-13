@@ -1,5 +1,7 @@
 # Source documentation audit
 
+[Documentation index](README.md)
+
 ## Scope, contract and missing context
 
 This Tier A prose pass owns baseline

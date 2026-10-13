@@ -1,5 +1,7 @@
 # Security and hardening review
 
+[Documentation index](README.md)
+
 ## Acceptance boundary
 
 The RFC 9421 parsers accept only `Signature-Input`, `Signature`, and
