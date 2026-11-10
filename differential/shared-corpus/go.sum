@@ -1,5 +1,5 @@
-github.com/dadrus/httpsig v0.9.1-0.20260717221208-0f24bf7dd9b7 h1:A5ksmGuaoxP2rISJpGt0uM67omxAEvzyiH8bp84U0X0=
-github.com/dadrus/httpsig v0.9.1-0.20260717221208-0f24bf7dd9b7/go.mod h1:7aPYLXJBrEbO2n7V3HrAENzDdymLASmyXCJ5ggcgGOo=
+github.com/dadrus/httpsig v0.10.0 h1:JQNPV6fFN4HrZrV64ewcClhmxThg2pSgCJcrNiKCWco=
+github.com/dadrus/httpsig v0.10.0/go.mod h1:ROHcLJOc1aYyQEF7/kkxHvSEAFmrDwOuaOTOHzpy+LA=
 github.com/dunglas/httpsfv v1.1.2 h1:432E+FKy2DLMbVcZeAnOuM7nhyJ4vTiH7b9iXJ/Dkmc=
 github.com/dunglas/httpsfv v1.1.2/go.mod h1:zID2mqw9mFsnt7YC3vYQ9/cjq30q41W+1AnDwH8TiMg=
 github.com/faustbrian/go-http-signature v1.0.0 h1:27GKLhQNgIbEXi7ZcGcdXD8VT5kwqRXHYzvPWBqt9BU=
