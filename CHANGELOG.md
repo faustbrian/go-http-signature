@@ -24,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   callbacks, body/transport ownership, streaming finality and replay outcomes.
 - Align current HTTP-SIG-DEC-006 with existing HTML-form query decoding and
   repeated-name refusal, preserving historical decision digests and runtime.
+- Close HTTP-SIG-DEC-010 to the six RFC 9421 signature algorithms and record
+  the IANA-registered `ml-dsa-44`, `ml-dsa-65`, and `ml-dsa-87` algorithms as
+  unsupported. They were already rejected; runtime behavior is unchanged.
+- Refresh the pinned IANA HTTP Message Signature, digest-algorithm, legacy
+  digest-algorithm, and field-name registry sources to their current content.
 
 ## [1.0.1] - 2026-10-06
 

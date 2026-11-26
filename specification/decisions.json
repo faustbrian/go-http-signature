@@ -409,7 +409,7 @@
       "classification": "interoperability policy",
       "decision_scope": "normative",
       "specification": "IANA HTTP Message Signature registries",
-      "version": "2026-07-20",
+      "version": "2026-10-23",
       "source_authority": "iana-http-message-signature",
       "section": "Signature Algorithms",
       "requirement_strength": "MUST",
@@ -419,14 +419,15 @@
         "Apply the explicit package behavior recorded by this decision."
       ],
       "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
-      "selected_behavior": "Only active registered algorithms with strict key, size, encoding, and randomness rules are accepted.",
+      "selected_behavior": "Only the six RFC 9421 algorithms rsa-pss-sha512, rsa-v1_5-sha256, hmac-sha256, ecdsa-p256-sha256, ecdsa-p384-sha384, and ed25519 are accepted, each with strict key, size, encoding, and randomness rules. The registered ml-dsa-44, ml-dsa-65, and ml-dsa-87 algorithms are unsupported and rejected.",
       "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
       "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
       "resource_consequences": "Processing and retained state remain within documented finite bounds.",
       "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
       "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
       "executable_evidence": [
-        "TestRFC9421AppendixBAlgorithmVectors"
+        "TestRFC9421AppendixBAlgorithmVectors",
+        "TestRegisteredButUnsupportedMLDSAAlgorithmsAreRejected"
       ],
       "fixture_evidence": [],
       "fuzz_evidence": [],
@@ -440,7 +441,7 @@
       "documentation": [
         "docs/specification-decisions.md"
       ],
-      "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+      "upstream_status": "IANA registered ml-dsa-44, ml-dsa-65, and ml-dsa-87 as Active on 2026-10-23 through the C2SP httpsig-pq v1.0.1 specification; the package records them as registered but unsupported.",
       "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
     },
     {

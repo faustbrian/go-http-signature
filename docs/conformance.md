@@ -44,12 +44,14 @@ against the fetched sources:
 
 - RFC 8941 has no recorded errata; RFC 9421 has verified errata 8102 and 8103;
   RFC 9530 has verified errata 8158 and 8273 plus reported erratum 8890.
-- The complete IANA Signature Algorithms (6), Signature Metadata Parameters
-  (6), Derived Component Names (10), Component Parameters (6), and HTTP Digest
-  Algorithms (8) registries are recorded with security-relevant status and
-  target fields. The deprecated legacy HTTP Digest Algorithm Values registry
-  (8) is separately pinned with its direct RFC 3230 relationship and all three
-  RFC 3230, RFC 9530, and replacement-registry deprecation-note references.
+- The complete IANA Signature Algorithms (9, of which the three ML-DSA entries
+  are registered but unsupported under HTTP-SIG-DEC-010), Signature Metadata
+  Parameters (6), Derived Component Names (10), Component Parameters (6), and
+  HTTP Digest Algorithms (8) registries are recorded with security-relevant
+  status and target fields. The deprecated legacy HTTP Digest Algorithm Values
+  registry (8) is separately pinned with its direct RFC 3230 relationship and
+  all three RFC 3230, RFC 9530, and replacement-registry deprecation-note
+  references.
 - The nine package-relevant HTTP Field Name records are pinned, including
   `Digest` and `Want-Digest` as obsoleted, their direct RFC 3230 references,
   and their RFC 9530 Section 1.3 obsoletion comments plus each active field's
@@ -111,7 +113,7 @@ an untracked parser-library detail.
 | 3.1 | Signer **MUST** select application-allowed algorithm and compatible key; component order **MUST NOT** change; each component **MUST** be a field or registered derived name; request control data and `created` **SHOULD** be covered/included. | Immutable signing profiles bind allowed algorithms, exact keys, ordered components, and explicit parameter policy. No universal coverage is chosen. | `signer_test.go`, `algorithm_test.go` | [Security](security.md) |
 | 3.2 | Verifier **MUST** follow parsing, policy, trusted-key, algorithm, base, and cryptographic steps; unknown/untrusted key **MUST** fail; algorithms from multiple sources **MUST** agree. | `Verifier.Verify` enforces ordered selection, profile, bounded resolution, key lifecycle/freshness, exact algorithm binding, base recreation, crypto, then replay consume. | `verifier_test.go` | [Security](security.md) |
 | 3.2.1 | Applications **MAY** add requirements, **MUST** enforce them, and **MUST NOT** accept nonconforming signatures. | Profiles are mandatory and invalid/insufficient coverage fails before key use. | policy failure tests | [Security](security.md) |
-| 3.3 | Signature method **MUST** be appropriate; registered `alg` values **MUST** be used when explicit; JWS `none` and prohibited JOSE algorithms **MUST NOT** be used. | Only six active native registry algorithms are accepted. JWS is not implemented and no `none` path exists. | RFC 9421 Appendix B fixed vectors for five algorithms, a pinned NIST CAVP P-384/SHA-384 vector, unsupported-algorithm tests, and strict-key tests | [Security](security.md) |
+| 3.3 | Signature method **MUST** be appropriate; registered `alg` values **MUST** be used when explicit; JWS `none` and prohibited JOSE algorithms **MUST NOT** be used. | Only the six RFC 9421 registry algorithms are accepted; the registered `ml-dsa-44`, `ml-dsa-65`, and `ml-dsa-87` algorithms are unsupported and rejected. JWS is not implemented and no `none` path exists. | RFC 9421 Appendix B fixed vectors for five algorithms, a pinned NIST CAVP P-384/SHA-384 vector, unsupported-algorithm tests including the ML-DSA identifiers, and strict-key tests | [Security](security.md) |
 | 4 | Signature labels **MUST** be unique and shared by both fields; both fields **MUST** exist with identical label sets; each field **MAY** carry multiple labels/lines. | Parsers reject duplicates and wrong member types; verifier requires equal sets; ordered values avoid map-order output. | `signature_fields_test.go`, verifier label-set tests | This matrix |
 | 4.1 | `Signature-Input` **MUST** preserve the exact serialized metadata used in the base; trailer use **MAY** occur but header use is **RECOMMENDED**; labels across lines **MUST** be unique. | Parsed order is preserved and canonical serialization drives the base. Header and explicit request/response trailer adapters are separate. | parser round trips and request/response trailer integration tests | [Integration](integration.md) |
 | 4.2 | `Signature` trailer use **MAY** occur but header use is **RECOMMENDED**; labels across lines **MUST** be unique. | Same as 4.1; RFC 8941 Item parameters are preserved as extension data; trailer loss is documented and fail-closed at recipients. | signature parameter round-trip and trailer integration tests | [Integration](integration.md) |
