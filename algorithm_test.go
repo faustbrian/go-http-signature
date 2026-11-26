@@ -632,3 +632,84 @@ func TestAlgorithmsRejectCorrectTypesWithInvalidKeyMaterial(t *testing.T) {
 		}
 	}
 }
+
+func TestRegisteredButUnsupportedMLDSAAlgorithmsAreRejected(t *testing.T) {
+	t.Parallel()
+
+	now := time.Unix(1_700_000_000, 0)
+	base := []byte("base")
+	hmacKey, err := NewHMACKey([]byte("0123456789abcdef0123456789abcdef"))
+	if err != nil {
+		t.Fatalf("NewHMACKey() error = %v", err)
+	}
+	signingConfig := func(algorithm Algorithm) SigningProfileConfig {
+		return SigningProfileConfig{
+			AllowedAlgorithms:  []Algorithm{algorithm},
+			CoveredComponents:  []ComponentIdentifier{{Name: "@method"}},
+			Expires:            ParameterRequired,
+			AlgorithmParameter: ParameterRequired,
+			Nonce:              ParameterForbidden,
+			Tag:                ParameterForbidden,
+			Lifetime:           time.Minute,
+			ResolveTimeout:     time.Second,
+			Now:                func() time.Time { return now },
+			Provider: signingKeyProviderFunc(func(context.Context) (SigningKey, error) {
+				return SigningKey{KeyID: "key", Algorithm: algorithm, Key: hmacKey, NotBefore: now.Add(-time.Hour), NotAfter: now.Add(time.Hour)}, nil
+			}),
+		}
+	}
+	verificationConfig := func(algorithm Algorithm) VerificationProfileConfig {
+		replay, replayErr := NewMemoryReplayStore(MemoryReplayConfig{Capacity: 4, MaxTTL: 2 * time.Minute, MaxKeyIDBytes: 64, MaxNonceBytes: 64, Now: func() time.Time { return now }})
+		if replayErr != nil {
+			t.Fatalf("NewMemoryReplayStore() error = %v", replayErr)
+		}
+		return VerificationProfileConfig{
+			AllowedAlgorithms:  []Algorithm{algorithm},
+			RequiredComponents: []ComponentIdentifier{{Name: "@method"}},
+			Created:            ParameterRequired,
+			Expires:            ParameterRequired,
+			AlgorithmParameter: ParameterRequired,
+			Nonce:              ParameterRequired,
+			Tag:                ParameterForbidden,
+			MaxAge:             time.Minute,
+			ClockSkew:          time.Second,
+			ResolveTimeout:     time.Second,
+			ReplayTimeout:      time.Second,
+			Now:                func() time.Time { return now },
+			Resolver: resolverFunc(func(context.Context, string) (ResolvedKey, error) {
+				return ResolvedKey{Algorithm: algorithm, Key: hmacKey, NotBefore: now.Add(-time.Minute), NotAfter: now.Add(time.Minute), FreshUntil: now.Add(30 * time.Second)}, nil
+			}),
+			Replay: replay,
+		}
+	}
+
+	// The same configurations are valid for a supported algorithm, so each
+	// rejection below is caused by the algorithm alone.
+	if _, err = NewSigningProfile(signingConfig(HMACSHA256)); err != nil {
+		t.Fatalf("NewSigningProfile(hmac-sha256) error = %v", err)
+	}
+	if _, err = NewVerificationProfile(verificationConfig(HMACSHA256)); err != nil {
+		t.Fatalf("NewVerificationProfile(hmac-sha256) error = %v", err)
+	}
+
+	// IANA registered these identifiers on 2026-10-23; HTTP-SIG-DEC-010 keeps
+	// the accepted set closed to the six RFC 9421 algorithms.
+	for _, algorithm := range []Algorithm{"ml-dsa-44", "ml-dsa-65", "ml-dsa-87"} {
+		t.Run(string(algorithm), func(t *testing.T) {
+			t.Parallel()
+
+			if _, signErr := Sign(context.Background(), algorithm, hmacKey, base, nil); !errors.Is(signErr, ErrUnsupportedSignatureAlgorithm) {
+				t.Fatalf("Sign() error = %v, want ErrUnsupportedSignatureAlgorithm", signErr)
+			}
+			if verifyErr := Verify(context.Background(), algorithm, hmacKey, base, make([]byte, 32)); !errors.Is(verifyErr, ErrUnsupportedSignatureAlgorithm) {
+				t.Fatalf("Verify() error = %v, want ErrUnsupportedSignatureAlgorithm", verifyErr)
+			}
+			if _, profileErr := NewSigningProfile(signingConfig(algorithm)); !errors.Is(profileErr, ErrInvalidSigningProfile) {
+				t.Fatalf("NewSigningProfile() error = %v, want ErrInvalidSigningProfile", profileErr)
+			}
+			if _, profileErr := NewVerificationProfile(verificationConfig(algorithm)); !errors.Is(profileErr, ErrInvalidVerificationProfile) {
+				t.Fatalf("NewVerificationProfile() error = %v, want ErrInvalidVerificationProfile", profileErr)
+			}
+		})
+	}
+}

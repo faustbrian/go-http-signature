@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "reviewed_at": "2026-10-05",
+  "reviewed_at": "2026-11-26",
   "review_interval_days": 30,
   "authorities": [
     {
@@ -63,9 +63,9 @@
     {
       "id": "iana-http-message-signature",
       "kind": "registry",
-      "version": "2026-07-20",
+      "version": "2026-10-23",
       "url": "https://www.iana.org/assignments/http-message-signature/http-message-signature.xml",
-      "sha256": "bd4b0304e21e226fef189ed283a31392b5ffc99a37d00e9911dc011dcfb1523f",
+      "sha256": "7311fb3d38d8f5d93b32fdfbb38ec6103c512b71380ef4f9545ffddeba862e22",
       "specifications": [
         "IANA HTTP Message Signature registries"
       ]
@@ -74,7 +74,7 @@
       "id": "iana-http-message-signature-updates",
       "kind": "releases",
       "url": "https://www.iana.org/assignments/http-message-signature/http-message-signature.xml",
-      "sha256": "bd4b0304e21e226fef189ed283a31392b5ffc99a37d00e9911dc011dcfb1523f",
+      "sha256": "7311fb3d38d8f5d93b32fdfbb38ec6103c512b71380ef4f9545ffddeba862e22",
       "specifications": [
         "IANA HTTP Message Signature registries"
       ]
@@ -84,7 +84,7 @@
       "kind": "registry",
       "version": "2024-05-22",
       "url": "https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml",
-      "sha256": "6336a1abc58420f6fcabab4a0cd999ce3c0a8f12e034e543f05edf342cf927e7",
+      "sha256": "a4013ac2108616b7395fd7e481bd342814d0d182faf0a15580121fe04776c636",
       "specifications": [
         "IANA Hash Algorithms for HTTP Digest Fields registry"
       ]
@@ -93,7 +93,7 @@
       "id": "iana-http-digest-algorithms-updates",
       "kind": "releases",
       "url": "https://www.iana.org/assignments/http-digest-hash-alg/http-digest-hash-alg.xml",
-      "sha256": "6336a1abc58420f6fcabab4a0cd999ce3c0a8f12e034e543f05edf342cf927e7",
+      "sha256": "a4013ac2108616b7395fd7e481bd342814d0d182faf0a15580121fe04776c636",
       "specifications": [
         "IANA Hash Algorithms for HTTP Digest Fields registry"
       ]
@@ -101,9 +101,9 @@
     {
       "id": "iana-http-fields",
       "kind": "registry",
-      "version": "2026-08-28",
+      "version": "2026-11-02",
       "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
-      "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d",
+      "sha256": "a279742590892cdb58177f7928d57f2577d3a3b898cd86eb0b26aa9c4f5ec096",
       "specifications": [
         "IANA HTTP Field Name registry"
       ]
@@ -112,7 +112,7 @@
       "id": "iana-http-fields-updates",
       "kind": "releases",
       "url": "https://www.iana.org/assignments/http-fields/http-fields.xml",
-      "sha256": "e9c70a0dd680385e8c7aae1da0c585794306f65b63636148623d1e2c0533cf1d",
+      "sha256": "a279742590892cdb58177f7928d57f2577d3a3b898cd86eb0b26aa9c4f5ec096",
       "specifications": [
         "IANA HTTP Field Name registry"
       ]

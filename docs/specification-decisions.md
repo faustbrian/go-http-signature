@@ -737,7 +737,7 @@ Authoritative source URL: https://www.iana.org/assignments/http-message-signatur
   "classification": "interoperability policy",
   "decision_scope": "normative",
   "specification": "IANA HTTP Message Signature registries",
-  "version": "2026-07-20",
+  "version": "2026-10-23",
   "source_authority": "iana-http-message-signature",
   "section": "Signature Algorithms",
   "requirement_strength": "MUST",
@@ -747,14 +747,15 @@ Authoritative source URL: https://www.iana.org/assignments/http-message-signatur
     "Apply the explicit package behavior recorded by this decision."
   ],
   "peer_behavior": "Maintained peers exercise the overlapping behavior recorded by the pinned differential evidence.",
-  "selected_behavior": "Only active registered algorithms with strict key, size, encoding, and randomness rules are accepted.",
+  "selected_behavior": "Only the six RFC 9421 algorithms rsa-pss-sha512, rsa-v1_5-sha256, hmac-sha256, ecdsa-p256-sha256, ecdsa-p384-sha384, and ed25519 are accepted, each with strict key, size, encoding, and randomness rules. The registered ml-dsa-44, ml-dsa-65, and ml-dsa-87 algorithms are unsupported and rejected.",
   "rationale": "The selected behavior keeps signer and verifier semantics explicit, stable, and reviewable.",
   "security_consequences": "Untrusted input cannot silently widen the selected protocol policy.",
   "resource_consequences": "Processing and retained state remain within documented finite bounds.",
   "compatibility_consequences": "Changing this selection requires compatibility and specification-decision review.",
   "wire_consequences": "Wire-visible behavior follows the selected behavior exactly.",
   "executable_evidence": [
-    "TestRFC9421AppendixBAlgorithmVectors"
+    "TestRFC9421AppendixBAlgorithmVectors",
+    "TestRegisteredButUnsupportedMLDSAAlgorithmsAreRejected"
   ],
   "fixture_evidence": [],
   "fuzz_evidence": [],
@@ -768,7 +769,7 @@ Authoritative source URL: https://www.iana.org/assignments/http-message-signatur
   "documentation": [
     "docs/specification-decisions.md"
   ],
-  "upstream_status": "No unresolved upstream contradiction is known for this selected package behavior.",
+  "upstream_status": "IANA registered ml-dsa-44, ml-dsa-65, and ml-dsa-87 as Active on 2026-10-23 through the C2SP httpsig-pq v1.0.1 specification; the package records them as registered but unsupported.",
   "reconsider_when": "A pinned authority, maintained peer, or supported Go transport contract changes this boundary."
 }
 ```
@@ -784,8 +785,14 @@ Authoritative source URL: https://www.iana.org/assignments/http-message-signatur
 - **Interpretations and peer behavior:** Dispatch by key type, trust `alg`,
   support only one algorithm, or bind every identifier to exact key and hash
   requirements. Peer support and key checks vary.
-- **Selected behavior:** All active IANA algorithms are explicit allow-list
-  entries with exact key type, curve, size, encoding, and cancellation checks.
+- **Selected behavior:** The accepted set is closed to the six RFC 9421
+  algorithms: `rsa-pss-sha512`, `rsa-v1_5-sha256`, `hmac-sha256`,
+  `ecdsa-p256-sha256`, `ecdsa-p384-sha384`, and `ed25519`. Each is an explicit
+  allow-list entry with exact key type, curve, size, encoding, and cancellation
+  checks. `ml-dsa-44`, `ml-dsa-65`, and `ml-dsa-87`, registered by IANA on
+  2026-10-23 from the C2SP httpsig-pq v1.0.1 specification, are registered but
+  unsupported: `Sign` and `Verify` return `ErrUnsupportedSignatureAlgorithm`
+  and signing and verification profiles refuse them.
   HMAC material is copied and bounded. RSA-PSS and ECDSA use Go-managed
   cryptographically secure randomness; the legacy caller-reader parameters are
   ignored so weak or blocking readers cannot affect signing. Inbound `alg`
@@ -799,9 +806,11 @@ Authoritative source URL: https://www.iana.org/assignments/http-message-signatur
   `TestAlgorithmsRejectWrongKeysRandomnessAndCancellation`,
   `TestRSAPSSSigningUsesGoManagedRandomness`, and
   `TestECDSASigningUsesGoManagedRandomness` cover `Algorithm`, key constructors,
-  signer, and verifier. IANA registry changes are the upstream trigger.
-  Reconsider after cryptographic review of a new, deprecated, or status-changed
-  algorithm.
+  signer, and verifier. `TestRegisteredButUnsupportedMLDSAAlgorithmsAreRejected`
+  covers the registered ML-DSA identifiers. IANA registry changes are the
+  upstream trigger; a newly registered algorithm stays unsupported until this
+  decision adds it. Reconsider after cryptographic review of a new, deprecated,
+  or status-changed algorithm.
 
 ## HTTP-SIG-DEC-011: Key resolution, rotation, revocation, and safe failures
 

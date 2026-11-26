@@ -201,7 +201,8 @@
         "iana-http-message-signature"
       ],
       "executable_evidence": [
-        "TestRFC9421AppendixBAlgorithmVectors"
+        "TestRFC9421AppendixBAlgorithmVectors",
+        "TestRegisteredButUnsupportedMLDSAAlgorithmsAreRejected"
       ],
       "fixtures": [],
       "fuzz": [],
@@ -212,7 +213,7 @@
       ],
       "differential_classification": "maintained peer agreement",
       "public_behavior": [
-        "Only active registered algorithms with strict key, size, encoding, and randomness rules are accepted."
+        "Only the six RFC 9421 algorithms rsa-pss-sha512, rsa-v1_5-sha256, hmac-sha256, ecdsa-p256-sha256, ecdsa-p384-sha384, and ed25519 are accepted, each with strict key, size, encoding, and randomness rules. The registered ml-dsa-44, ml-dsa-65, and ml-dsa-87 algorithms are unsupported and rejected."
       ]
     },
     {
